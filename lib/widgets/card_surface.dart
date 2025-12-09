@@ -211,14 +211,23 @@ class _AnimatedButtonState extends State<_AnimatedButton>
   }
 
   void _handleTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
-    _controller.forward();
+    if (!_isPressed) {
+      setState(() => _isPressed = true);
+      _controller.forward();
+    }
   }
 
   void _handleTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
-    _controller.reverse();
-    widget.onNext();
+    if (_isPressed) {
+      setState(() => _isPressed = false);
+      _controller.reverse();
+      // Small delay to ensure visual feedback is seen
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (mounted) {
+          widget.onNext();
+        }
+      });
+    }
   }
 
   void _handleTapCancel() {
@@ -231,74 +240,99 @@ class _AnimatedButtonState extends State<_AnimatedButton>
     return RepaintBoundary(
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Container(
-          decoration: BoxDecoration(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTapDown: _handleTapDown,
+            onTapUp: _handleTapUp,
+            onTapCancel: _handleTapCancel,
+            onTap: () {
+              // Direct tap handler for better responsiveness
+              if (!_isPressed) {
+                setState(() => _isPressed = true);
+                _controller.forward();
+                Future.delayed(const Duration(milliseconds: 150), () {
+                  if (mounted) {
+                    setState(() => _isPressed = false);
+                    _controller.reverse();
+                    widget.onNext();
+                  }
+                });
+              }
+            },
             borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                widget.buttonColor,
-                widget.buttonColor.withValues(alpha: 0.85),
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: widget.buttonColor.withValues(alpha: _isPressed ? 0.25 : 0.35),
-                blurRadius: _isPressed ? 8 : 12,
-                offset: Offset(0, _isPressed ? 2 : 4),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: GestureDetector(
-              onTapDown: _handleTapDown,
-              onTapUp: _handleTapUp,
-              onTapCancel: _handleTapCancel,
+            splashColor: Colors.white.withValues(alpha: 0.2),
+            highlightColor: Colors.white.withValues(alpha: 0.1),
+            child: Semantics(
+              button: true,
+              label: widget.isLast ? 'Done' : 'Next',
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      widget.isLast ? 'Done' : 'Next',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    if (!widget.isLast) ...[
-                      const SizedBox(width: 8),
-                      _IconAnimation(
-                        key: const ValueKey('arrow'),
-                        child: const Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ] else ...[
-                      const SizedBox(width: 8),
-                      _IconAnimation(
-                        key: const ValueKey('check'),
-                        isCheck: true,
-                        child: const Icon(
-                          Icons.check_circle_rounded,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+              // Ensure minimum tap target size (48x48 for accessibility)
+              constraints: const BoxConstraints(
+                minHeight: 48,
+                minWidth: 80,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    widget.buttonColor,
+                    widget.buttonColor.withValues(alpha: 0.85),
                   ],
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.buttonColor.withValues(alpha: _isPressed ? 0.25 : 0.35),
+                    blurRadius: _isPressed ? 8 : 12,
+                    offset: Offset(0, _isPressed ? 2 : 4),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 32,
+                vertical: 16,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.isLast ? 'Done' : 'Next',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  if (!widget.isLast) ...[
+                    const SizedBox(width: 8),
+                    _IconAnimation(
+                      key: const ValueKey('arrow'),
+                      child: const Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ] else ...[
+                    const SizedBox(width: 8),
+                    _IconAnimation(
+                      key: const ValueKey('check'),
+                      isCheck: true,
+                      child: const Icon(
+                        Icons.check_circle_rounded,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
+          ),
           ),
         ),
       ),
