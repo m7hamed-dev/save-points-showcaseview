@@ -10,13 +10,37 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseScheme = ColorScheme.fromSeed(
+      seedColor: Colors.indigo,
+      brightness: Brightness.light,
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Save Points Explainer',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        colorScheme: baseScheme.copyWith(
+          surface: const Color(0xFFF8F7FF),
+          surfaceContainerHighest: const Color(0xFFEAE8FF),
+        ),
         useMaterial3: true,
-        textTheme: Typography.blackMountainView,
+        textTheme: Typography.blackMountainView.copyWith(
+          titleLarge: const TextStyle(
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.3,
+          ),
+          titleMedium: const TextStyle(
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.2,
+          ),
+          bodyLarge: const TextStyle(
+            height: 1.5,
+            letterSpacing: 0,
+          ),
+          bodyMedium: const TextStyle(
+            height: 1.5,
+          ),
+        ),
       ),
       routes: {
         '/example': (_) => const ExampleCoachPage(),
