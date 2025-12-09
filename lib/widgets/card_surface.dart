@@ -1,6 +1,6 @@
 part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
-class _CardSurface extends StatelessWidget {
+class _CardSurface extends StatefulWidget {
   const _CardSurface({
     required this.primary,
     required this.buttonColor,
@@ -28,6 +28,45 @@ class _CardSurface extends StatelessWidget {
   final TextStyle buttonStyle;
 
   @override
+  State<_CardSurface> createState() => _CardSurfaceState();
+}
+
+class _CardSurfaceState extends State<_CardSurface>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.85, curve: Curves.easeOutQuart),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 0.15),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutBack,
+      ),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -35,150 +74,312 @@ class _CardSurface extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            primary.withValues(alpha: 0.04),
-            primary.withValues(alpha: 0.0),
+            widget.primary.withValues(alpha: 0.04),
+            widget.primary.withValues(alpha: 0.0),
           ],
           stops: const [0.0, 1.0],
         ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: titleStyle.copyWith(
-                letterSpacing: -0.8,
-                height: 1.2,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 8),
-            if (description.length == 1)
-              Text(
-                description.first,
-                style: bodyStyle.copyWith(
-                  height: 1.65,
-                  letterSpacing: -0.2,
-                  color: colorScheme.onSurface.withValues(alpha: 0.75),
-                ),
-              )
-            else
-              _PagedDescription(descriptions: description),
-            const SizedBox(height: 24),
-            Container(
-              height: 1.5,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.transparent,
-                    colorScheme.outline.withValues(alpha: 0.15),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Row(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (onSkip != null)
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: onSkip,
-                      borderRadius: BorderRadius.circular(14),
-                      splashColor: colorScheme.primary.withValues(alpha: 0.08),
-                      highlightColor:
-                          colorScheme.primary.withValues(alpha: 0.05),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 14,
-                        ),
-                        child: Text(
-                          'Skip',
-                          style: buttonStyle.copyWith(
-                            color:
-                                colorScheme.onSurface.withValues(alpha: 0.65),
-                            letterSpacing: 0.1,
+                Text(
+                  widget.title,
+                  style: widget.titleStyle.copyWith(
+                    letterSpacing: -0.8,
+                    height: 1.2,
+                    color: widget.colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (widget.description.length == 1)
+                  Text(
+                    widget.description.first,
+                    style: widget.bodyStyle.copyWith(
+                      height: 1.65,
+                      letterSpacing: -0.2,
+                      color: widget.colorScheme.onSurface.withValues(alpha: 0.75),
+                    ),
+                  )
+                else
+                  _PagedDescription(descriptions: widget.description),
+                const SizedBox(height: 24),
+                Container(
+                  height: 1.5,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        widget.colorScheme.outline.withValues(alpha: 0.15),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: [
+                    if (widget.onSkip != null)
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: widget.onSkip,
+                          borderRadius: BorderRadius.circular(14),
+                          splashColor: widget.colorScheme.primary.withValues(alpha: 0.08),
+                          highlightColor:
+                              widget.colorScheme.primary.withValues(alpha: 0.05),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 14,
+                            ),
+                            child: Text(
+                              'Skip',
+                              style: widget.buttonStyle.copyWith(
+                                color:
+                                    widget.colorScheme.onSurface.withValues(alpha: 0.65),
+                                letterSpacing: 0.1,
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                    const Spacer(),
+                    _AnimatedButton(
+                      buttonColor: widget.buttonColor,
+                      isLast: widget.isLast,
+                      onNext: widget.onNext,
                     ),
-                  ),
-                const Spacer(),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        buttonColor,
-                        buttonColor.withValues(alpha: 0.85),
-                      ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: buttonColor.withValues(alpha: 0.35),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: onNext,
-                      borderRadius: BorderRadius.circular(16),
-                      splashColor: Colors.white.withValues(alpha: 0.2),
-                      highlightColor: Colors.white.withValues(alpha: 0.1),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              isLast ? 'Done' : 'Next',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16,
-                                letterSpacing: 0.3,
-                              ),
-                            ),
-                            if (!isLast) ...[
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ] else ...[
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.check_circle_rounded,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
+class _AnimatedButton extends StatefulWidget {
+  const _AnimatedButton({
+    required this.buttonColor,
+    required this.isLast,
+    required this.onNext,
+  });
+
+  final Color buttonColor;
+  final bool isLast;
+  final VoidCallback onNext;
+
+  @override
+  State<_AnimatedButton> createState() => _AnimatedButtonState();
+}
+
+class _AnimatedButtonState extends State<_AnimatedButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutBack,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+    _controller.forward();
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+    _controller.reverse();
+    widget.onNext();
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+    _controller.reverse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                widget.buttonColor,
+                widget.buttonColor.withValues(alpha: 0.85),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: widget.buttonColor.withValues(alpha: _isPressed ? 0.25 : 0.35),
+                blurRadius: _isPressed ? 8 : 12,
+                offset: Offset(0, _isPressed ? 2 : 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: GestureDetector(
+              onTapDown: _handleTapDown,
+              onTapUp: _handleTapUp,
+              onTapCancel: _handleTapCancel,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.isLast ? 'Done' : 'Next',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    if (!widget.isLast) ...[
+                      const SizedBox(width: 8),
+                      _IconAnimation(
+                        key: const ValueKey('arrow'),
+                        child: const Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ] else ...[
+                      const SizedBox(width: 8),
+                      _IconAnimation(
+                        key: const ValueKey('check'),
+                        isCheck: true,
+                        child: const Icon(
+                          Icons.check_circle_rounded,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IconAnimation extends StatefulWidget {
+  const _IconAnimation({
+    super.key,
+    required this.child,
+    this.isCheck = false,
+  });
+
+  final Widget child;
+  final bool isCheck;
+
+  @override
+  State<_IconAnimation> createState() => _IconAnimationState();
+}
+
+class _IconAnimationState extends State<_IconAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacityAnimation;
+  late final Animation<double> _transformAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _opacityAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
+    if (widget.isCheck) {
+      _transformAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    } else {
+      _transformAnimation = Tween<double>(begin: 4.0, end: 0.0).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    }
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacityAnimation,
+      child: widget.isCheck
+          ? ScaleTransition(
+              scale: _transformAnimation,
+              child: widget.child,
+            )
+          : AnimatedBuilder(
+              animation: _transformAnimation,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(_transformAnimation.value, 0),
+                  child: child,
+                );
+              },
+              child: widget.child,
+            ),
+    );
+  }
+}

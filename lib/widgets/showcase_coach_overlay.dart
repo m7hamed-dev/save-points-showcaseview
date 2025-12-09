@@ -12,16 +12,30 @@ class _PulsingHighlight extends StatefulWidget {
 class _PulsingHighlightState extends State<_PulsingHighlight>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  late final CurvedAnimation _curvedAnimation;
+  late final ColorScheme _colorScheme;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2400),
       vsync: this,
+    );
+    // Create curve once, reuse it
+    _curvedAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutCubic,
     );
     // Start animation immediately and keep it repeating
     _controller.repeat(reverse: true);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Cache colorScheme to avoid Theme lookups
+    _colorScheme = Theme.of(context).colorScheme;
   }
 
   @override
@@ -32,62 +46,146 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          // Use cached curved animation value
+          final curved = _curvedAnimation.value;
+
+          // Pre-calculate constants to reduce math operations
+          final controllerValue = _controller.value;
+          final twoPiValue = controllerValue * 2 * math.pi;
+          final haloWave = 0.5 + (0.5 * math.sin(twoPiValue));
+
+          // Border opacity pulses between 0.75 and 1.0 (smoother range)
+          final borderOpacity = 0.75 + (0.25 * curved);
+          // Shadow intensity pulses between 0.18 and 0.42 (enhanced range)
+          final shadowIntensity = 0.18 + (0.24 * curved);
+          // Blur radius pulses between 20 and 36 (smoother range)
+          final blurRadius = 20 + (16 * curved);
+          // Spread radius pulses between 3.0 and 6.0 (smoother range)
+          final spreadRadius = 3.0 + (3.0 * curved);
+          // Bounce scale between 0.96 and 1.04 (subtler bounce)
+          final bounceScale = 0.96 + (0.08 * curved);
+          // Slight float to give a gentle rise/fall (smoother)
+          final floatOffset = -1.5 * curved;
+
+          return Transform.translate(
+            offset: Offset(0, floatOffset),
+            child: Transform.scale(
+              scale: bounceScale,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: borderOpacity),
+                    width: 3,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _colorScheme.primary
+                          .withValues(alpha: shadowIntensity * haloWave),
+                      blurRadius: blurRadius,
+                      spreadRadius: spreadRadius,
+                    ),
+                    BoxShadow(
+                      color:
+                          Colors.white.withValues(alpha: 0.4 * borderOpacity),
+                      blurRadius: 12 + (5 * curved),
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: widget.child,
+              ),
+            ),
+          );
+        },
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+class _HighlightAnimation extends StatefulWidget {
+  const _HighlightAnimation({
+    super.key,
+    required this.primary,
+  });
+
+  final Color primary;
+
+  @override
+  State<_HighlightAnimation> createState() => _HighlightAnimationState();
+}
+
+class _HighlightAnimationState extends State<_HighlightAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    // Spring-like scale animation with bounce
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(begin: 0.75, end: 1.08)
+            .chain(CurveTween(curve: Curves.easeOutBack)),
+        weight: 75,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 1.08, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 25,
+      ),
+    ]).animate(_controller);
+
+    // Smooth fade in with faster start - use Interval to prevent overshoot
+    _opacityAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 1.0, curve: Curves.easeOutQuart),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        // Use a curved wave for a softer ease-in/out pulse.
-        final curved = CurvedAnimation(
-          parent: _controller,
-          curve: Curves.easeInOutCubic,
-        ).value;
-
-        // Secondary wave to subtly vary the glow strength.
-        final haloWave = 0.5 + (0.5 * math.sin(_controller.value * 2 * math.pi));
-
-        // Border opacity pulses between 0.7 and 1.0
-        final borderOpacity = 0.7 + (0.3 * curved);
-        // Shadow intensity pulses between 0.15 and 0.38
-        final shadowIntensity = 0.15 + (0.23 * curved);
-        // Blur radius pulses between 18 and 32
-        final blurRadius = 18 + (14 * curved);
-        // Spread radius pulses between 2.5 and 5.5
-        final spreadRadius = 2.5 + (3 * curved);
-        // Bounce scale between 0.95 and 1.05 to draw focus
-        final bounceScale = 0.95 + (0.10 * curved);
-        // Slight float to give a gentle rise/fall
-        final floatOffset = -2 * curved;
-
-        return Transform.translate(
-          offset: Offset(0, floatOffset),
-          child: Transform.scale(
-            scale: bounceScale,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: borderOpacity),
-                  width: 3,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.primary
-                        .withValues(alpha: shadowIntensity * haloWave),
-                    blurRadius: blurRadius,
-                    spreadRadius: spreadRadius,
-                  ),
-                  BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.4 * borderOpacity),
-                    blurRadius: 12 + (5 * curved),
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: widget.child,
-            ),
+        // Clamp opacity to [0, 1] to prevent errors
+        final opacity = _opacityAnimation.value.clamp(0.0, 1.0);
+        return Opacity(
+          opacity: opacity,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: child,
           ),
         );
       },
+      child: _PulsingHighlight(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: widget.primary.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -121,15 +219,20 @@ class _CoachOverlay extends StatelessWidget {
       children: [
         Positioned.fill(
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 380),
-            switchInCurve: Curves.easeInOutCubicEmphasized,
-            switchOutCurve: Curves.easeInOutCubicEmphasized,
+            duration: const Duration(milliseconds: 450),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
             transitionBuilder: (child, animation) {
-              final curved = CurvedAnimation(
+              // Smooth fade with slight scale for depth
+              final fade = CurvedAnimation(
                 parent: animation,
-                curve: Curves.easeInOutCubicEmphasized,
+                curve: const Interval(0.0, 0.9, curve: Curves.easeOut),
               );
-              return FadeTransition(opacity: curved, child: child);
+
+              return FadeTransition(
+                opacity: fade,
+                child: child,
+              );
             },
             child: _BackdropHole(
               key: ValueKey(rect?.hashCode ?? 0),
@@ -142,15 +245,30 @@ class _CoachOverlay extends StatelessWidget {
         if (rect != null)
           Positioned.fill(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 420),
-              switchInCurve: Curves.easeInOutCubicEmphasized,
-              switchOutCurve: Curves.easeInOutCubicEmphasized,
+              duration: const Duration(milliseconds: 500),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
               transitionBuilder: (child, animation) {
-                final curved = CurvedAnimation(
+                // Combine fade with subtle scale for smoother appearance
+                final fade = CurvedAnimation(
                   parent: animation,
-                  curve: Curves.easeInOutCubicEmphasized,
+                  curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
                 );
-                return FadeTransition(opacity: curved, child: child);
+
+                final scale = Tween<double>(begin: 0.95, end: 1.0).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  ),
+                );
+
+                return FadeTransition(
+                  opacity: fade,
+                  child: ScaleTransition(
+                    scale: scale,
+                    child: child,
+                  ),
+                );
               },
               child: DecoratedBox(
                 key: ValueKey('gradient_${rect!.hashCode}'),
@@ -181,28 +299,16 @@ class _CoachOverlay extends StatelessWidget {
         /// Highlight
         if (rect != null)
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOutQuart,
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeOutCubic,
             left: rect!.left,
             top: rect!.top,
             width: rect!.width,
             height: rect!.height,
             child: IgnorePointer(
-              child: TweenAnimationBuilder<double>(
+              child: _HighlightAnimation(
                 key: ValueKey('highlight_${rect!.hashCode}'),
-                tween: Tween(begin: 0.90, end: 1.0),
-                duration: const Duration(milliseconds: 600),
-                curve: Curves.easeOutQuart,
-                builder: (context, scale, child) =>
-                    Transform.scale(scale: scale, child: child),
-                child: _PulsingHighlight(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: primary.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                  ),
-                ),
+                primary: primary,
               ),
             ),
           ),
@@ -249,41 +355,48 @@ class _CoachOverlay extends StatelessWidget {
                         child: RepaintBoundary(
                           child: Center(
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 480),
+                              duration: const Duration(milliseconds: 600),
                               switchInCurve: Curves.easeOutCubic,
                               switchOutCurve: Curves.easeInCubic,
                               transitionBuilder: (child, animation) {
                                 // Smooth emphasis curve for both enter/exit
                                 final curved = CurvedAnimation(
                                   parent: animation,
-                                  curve: Curves.easeInOutCubicEmphasized,
+                                  curve: Curves.easeOutCubic,
                                 );
 
-                                // Subtle vertical travel depending on placement
+                                // More dynamic vertical travel
                                 final slide = Tween<Offset>(
-                                  begin: Offset(0.0, placeAbove ? -0.08 : 0.08),
+                                  begin: Offset(0.0, placeAbove ? -0.2 : 0.2),
                                   end: Offset.zero,
-                                ).animate(curved);
+                                ).animate(
+                                  CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutBack,
+                                  ),
+                                );
 
-                                // Soft pop-in with a slight overshoot then settle
+                                // Bouncy pop-in with spring-like effect
                                 final scale = TweenSequence<double>([
                                   TweenSequenceItem(
-                                    tween: Tween(begin: 0.95, end: 1.04).chain(
-                                      CurveTween(curve: Curves.easeOutCubic),
+                                    tween: Tween(begin: 0.8, end: 1.1).chain(
+                                      CurveTween(curve: Curves.easeOutBack),
                                     ),
-                                    weight: 60,
+                                    weight: 70,
                                   ),
                                   TweenSequenceItem(
-                                    tween: Tween(begin: 1.04, end: 1.0).chain(
-                                      CurveTween(curve: Curves.easeInCubic),
+                                    tween: Tween(begin: 1.1, end: 1.0).chain(
+                                      CurveTween(curve: Curves.easeInOut),
                                     ),
-                                    weight: 40,
+                                    weight: 30,
                                   ),
                                 ]).animate(curved);
 
+                                // Faster fade with smooth curve - clamp to prevent overshoot
                                 final fade = CurvedAnimation(
                                   parent: animation,
-                                  curve: Curves.easeInOut,
+                                  curve: const Interval(0.0, 1.0,
+                                      curve: Curves.easeOutQuart),
                                 );
 
                                 return SlideTransition(
@@ -345,26 +458,47 @@ class _CoachOverlay extends StatelessWidget {
                     ),
                     child: Center(
                       child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 450),
-                        switchInCurve: Curves.easeOutQuart,
-                        switchOutCurve: Curves.easeInQuart,
+                        duration: const Duration(milliseconds: 600),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
                         transitionBuilder: (child, animation) {
                           final curvedAnimation = CurvedAnimation(
                             parent: animation,
-                            curve: Curves.easeInOutQuart,
+                            curve: Curves.easeOutCubic,
                           );
+
+                          // Bouncy scale animation with spring effect
+                          final scale = TweenSequence<double>([
+                            TweenSequenceItem(
+                              tween: Tween(begin: 0.8, end: 1.1).chain(
+                                CurveTween(curve: Curves.easeOutBack),
+                              ),
+                              weight: 70,
+                            ),
+                            TweenSequenceItem(
+                              tween: Tween(begin: 1.1, end: 1.0).chain(
+                                CurveTween(curve: Curves.easeInOut),
+                              ),
+                              weight: 30,
+                            ),
+                          ]).animate(curvedAnimation);
+
+                          // Faster fade - clamp to prevent overshoot
+                          final fade = CurvedAnimation(
+                            parent: animation,
+                            curve: const Interval(0.0, 1.0,
+                                curve: Curves.easeOutQuart),
+                          );
+
                           return SlideTransition(
                             position: Tween<Offset>(
-                              begin: const Offset(0.0, 0.1),
+                              begin: const Offset(0.0, 0.15),
                               end: Offset.zero,
                             ).animate(curvedAnimation),
                             child: FadeTransition(
-                              opacity: curvedAnimation,
+                              opacity: fade,
                               child: ScaleTransition(
-                                scale: Tween<double>(
-                                  begin: 0.92,
-                                  end: 1.0,
-                                ).animate(curvedAnimation),
+                                scale: scale,
                                 child: child,
                               ),
                             ),

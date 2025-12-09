@@ -38,20 +38,24 @@ class _PagedDescriptionState extends State<_PagedDescription> {
             onPageChanged: (i) => setState(() => _index = i),
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, i) => AnimatedSwitcher(
-              duration: const Duration(milliseconds: 350),
-              switchInCurve: Curves.easeOutCubic,
+              duration: const Duration(milliseconds: 500),
+              switchInCurve: Curves.easeOutBack,
               switchOutCurve: Curves.easeInCubic,
               transitionBuilder: (child, animation) {
+                final fade = CurvedAnimation(
+                  parent: animation,
+                  curve: const Interval(0.0, 0.85, curve: Curves.easeOutQuart),
+                );
                 return FadeTransition(
-                  opacity: animation,
+                  opacity: fade,
                   child: SlideTransition(
                     position: Tween<Offset>(
-                      begin: const Offset(0.0, 0.12),
+                      begin: const Offset(0.0, 0.2),
                       end: Offset.zero,
                     ).animate(
                       CurvedAnimation(
                         parent: animation,
-                        curve: Curves.easeOutCubic,
+                        curve: Curves.easeOutBack,
                       ),
                     ),
                     child: child,
@@ -81,31 +85,39 @@ class _PagedDescriptionState extends State<_PagedDescription> {
           mainAxisSize: MainAxisSize.min,
           children: List.generate(widget.descriptions.length, (i) {
             final selected = i == _index;
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 450),
-              curve: Curves.easeOutQuart,
-              margin: const EdgeInsets.only(right: 10),
-              height: 5,
-              width: selected ? 32 : 5,
-              decoration: BoxDecoration(
-                color: selected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2.5),
-                boxShadow: selected
-                    ? [
-                        BoxShadow(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primary.withValues(alpha: 0.5),
-                          blurRadius: 8,
-                          spreadRadius: 1,
-                        ),
-                      ]
-                    : null,
-              ),
+            return TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: selected ? 1.0 : 0.0),
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeOutBack,
+              builder: (context, progress, child) {
+                final width = 5.0 + (27.0 * progress);
+                final opacity = 0.3 + (0.7 * progress);
+                final shadowOpacity = 0.5 * progress;
+                
+                return Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  height: 5,
+                  width: width,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary.withValues(
+                      alpha: opacity,
+                    ),
+                    borderRadius: BorderRadius.circular(2.5),
+                    boxShadow: progress > 0.5
+                        ? [
+                            BoxShadow(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: shadowOpacity),
+                              blurRadius: 8 * progress,
+                              spreadRadius: 1 * progress,
+                            ),
+                          ]
+                        : null,
+                  ),
+                );
+              },
             );
           }),
         ),
