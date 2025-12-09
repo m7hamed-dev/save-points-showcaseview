@@ -5,6 +5,9 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 ![Pub Version](https://img.shields.io/pub/v/save_points_showcaseview)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
+## Preview
+![Showcase Coach Preview](assets/video.gif)
+
 ## Why use Showcase Coach?
 - **Design-first**: Glassmorphism, elevated cards, and balanced typography that fit Material 3.
 - **Safe by default**: Duplicate key detection, visibility checks, and user-friendly error dialogs.
