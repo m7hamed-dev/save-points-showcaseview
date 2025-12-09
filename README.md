@@ -1,9 +1,12 @@
 # Showcase Coach
 
+<!-- ![Save Points Header](assets/screenshot.png) -->
+
 Modern, design-forward showcase coach overlays for Flutter with smooth motion, glassmorphism, and sensible validation so you can guide users through product tours with confidence.
 
 ![Pub Version](https://img.shields.io/pub/v/save_points_showcaseview)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Showcase Coach Screenshot](assets/screenshot.png)
 
 ## Preview
 ![Showcase Coach Preview](assets/video.gif)
