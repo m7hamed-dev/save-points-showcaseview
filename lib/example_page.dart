@@ -24,14 +24,18 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
       config: const ShowcaseCoachConfig(
         fontFamily: 'Inter',
         primaryColor: Color.fromARGB(255, 28, 17, 233),
-        overlayTintOpacity: 0.12,
+        overlayTintOpacity: 0.08,
+        cardStyle: ShowcaseCoachCardStyle.normal, // higher-contrast card
+        reduceMotion: true, // disables blur behind overlay for clarity
         titleStyle: TextStyle(
           fontWeight: FontWeight.w800,
           letterSpacing: -0.4,
+          color: Colors.black87,
         ),
         bodyStyle: TextStyle(
           fontSize: 15.5,
           height: 1.6,
+          color: Colors.black87,
         ),
         buttonTextStyle: TextStyle(
           fontWeight: FontWeight.w700,
