@@ -11,4 +11,3 @@ class Phase {
   final String description;
   final IconData icon;
 }
-

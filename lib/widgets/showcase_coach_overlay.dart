@@ -395,8 +395,11 @@ class _CoachOverlay extends StatelessWidget {
                                 // Faster fade with smooth curve - clamp to prevent overshoot
                                 final fade = CurvedAnimation(
                                   parent: animation,
-                                  curve: const Interval(0.0, 1.0,
-                                      curve: Curves.easeOutQuart),
+                                  curve: const Interval(
+                                    0.0,
+                                    1.0,
+                                    curve: Curves.easeOutQuart,
+                                  ),
                                 );
 
                                 return SlideTransition(
@@ -486,8 +489,11 @@ class _CoachOverlay extends StatelessWidget {
                           // Faster fade - clamp to prevent overshoot
                           final fade = CurvedAnimation(
                             parent: animation,
-                            curve: const Interval(0.0, 1.0,
-                                curve: Curves.easeOutQuart),
+                            curve: const Interval(
+                              0.0,
+                              1.0,
+                              curve: Curves.easeOutQuart,
+                            ),
                           );
 
                           return SlideTransition(

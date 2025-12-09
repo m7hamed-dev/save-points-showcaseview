@@ -282,8 +282,10 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            Icon(Icons.check_circle,
-                                color: colorScheme.primary,),
+                            Icon(
+                              Icons.check_circle,
+                              color: colorScheme.primary,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               'Adaptive overlay respects motion settings',
@@ -294,8 +296,10 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
                         const SizedBox(height: 6),
                         Row(
                           children: [
-                            Icon(Icons.check_circle,
-                                color: colorScheme.primary,),
+                            Icon(
+                              Icons.check_circle,
+                              color: colorScheme.primary,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               'Readable typography and balanced spacing',

@@ -49,9 +49,8 @@ class _BackdropHoleState extends State<_BackdropHole>
       return _cachedPath!;
     }
 
-    final path = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    
+    final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+
     if (widget.rect != null) {
       path.addRRect(
         RRect.fromRectAndRadius(widget.rect!, const Radius.circular(16)),
@@ -70,7 +69,7 @@ class _BackdropHoleState extends State<_BackdropHole>
       builder: (context, constraints) {
         final size = Size(constraints.maxWidth, constraints.maxHeight);
         final path = _buildPath(size);
-        
+
         return RepaintBoundary(
           child: ClipPath(
             clipper: _HoleClipper(path),
@@ -79,9 +78,10 @@ class _BackdropHoleState extends State<_BackdropHole>
               builder: (context, child) {
                 final blurSigma = _blurAnimation.value;
                 final gradientOpacity = _opacityAnimation.value;
-                
+
                 return BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+                  filter:
+                      ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(

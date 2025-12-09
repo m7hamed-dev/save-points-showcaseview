@@ -93,15 +93,15 @@ class _PagedDescriptionState extends State<_PagedDescription> {
                 final width = 5.0 + (27.0 * progress);
                 final opacity = 0.3 + (0.7 * progress);
                 final shadowOpacity = 0.5 * progress;
-                
+
                 return Container(
                   margin: const EdgeInsets.only(right: 10),
                   height: 5,
                   width: width,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withValues(
-                      alpha: opacity,
-                    ),
+                          alpha: opacity,
+                        ),
                     borderRadius: BorderRadius.circular(2.5),
                     boxShadow: progress > 0.5
                         ? [

@@ -105,7 +105,8 @@ class _CardSurfaceState extends State<_CardSurface>
                     style: widget.bodyStyle.copyWith(
                       height: 1.65,
                       letterSpacing: -0.2,
-                      color: widget.colorScheme.onSurface.withValues(alpha: 0.75),
+                      color:
+                          widget.colorScheme.onSurface.withValues(alpha: 0.75),
                     ),
                   )
                 else
@@ -132,9 +133,10 @@ class _CardSurfaceState extends State<_CardSurface>
                         child: InkWell(
                           onTap: widget.onSkip,
                           borderRadius: BorderRadius.circular(14),
-                          splashColor: widget.colorScheme.primary.withValues(alpha: 0.08),
-                          highlightColor:
-                              widget.colorScheme.primary.withValues(alpha: 0.05),
+                          splashColor: widget.colorScheme.primary
+                              .withValues(alpha: 0.08),
+                          highlightColor: widget.colorScheme.primary
+                              .withValues(alpha: 0.05),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 24,
@@ -143,8 +145,8 @@ class _CardSurfaceState extends State<_CardSurface>
                             child: Text(
                               'Skip',
                               style: widget.buttonStyle.copyWith(
-                                color:
-                                    widget.colorScheme.onSurface.withValues(alpha: 0.65),
+                                color: widget.colorScheme.onSurface
+                                    .withValues(alpha: 0.65),
                                 letterSpacing: 0.1,
                               ),
                             ),
@@ -267,72 +269,73 @@ class _AnimatedButtonState extends State<_AnimatedButton>
               button: true,
               label: widget.isLast ? 'Done' : 'Next',
               child: Container(
-              // Ensure minimum tap target size (48x48 for accessibility)
-              constraints: const BoxConstraints(
-                minHeight: 48,
-                minWidth: 80,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    widget.buttonColor,
-                    widget.buttonColor.withValues(alpha: 0.85),
+                // Ensure minimum tap target size (48x48 for accessibility)
+                constraints: const BoxConstraints(
+                  minHeight: 48,
+                  minWidth: 80,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      widget.buttonColor,
+                      widget.buttonColor.withValues(alpha: 0.85),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.buttonColor
+                          .withValues(alpha: _isPressed ? 0.25 : 0.35),
+                      blurRadius: _isPressed ? 8 : 12,
+                      offset: Offset(0, _isPressed ? 2 : 4),
+                    ),
                   ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.buttonColor.withValues(alpha: _isPressed ? 0.25 : 0.35),
-                    blurRadius: _isPressed ? 8 : 12,
-                    offset: Offset(0, _isPressed ? 2 : 4),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 32,
-                vertical: 16,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.isLast ? 'Done' : 'Next',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  if (!widget.isLast) ...[
-                    const SizedBox(width: 8),
-                    _IconAnimation(
-                      key: const ValueKey('arrow'),
-                      child: const Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 20,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.isLast ? 'Done' : 'Next',
+                      style: const TextStyle(
                         color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        letterSpacing: 0.3,
                       ),
                     ),
-                  ] else ...[
-                    const SizedBox(width: 8),
-                    _IconAnimation(
-                      key: const ValueKey('check'),
-                      isCheck: true,
-                      child: const Icon(
-                        Icons.check_circle_rounded,
-                        size: 20,
-                        color: Colors.white,
+                    if (!widget.isLast) ...[
+                      const SizedBox(width: 8),
+                      const _IconAnimation(
+                        key: ValueKey('arrow'),
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
+                    ] else ...[
+                      const SizedBox(width: 8),
+                      const _IconAnimation(
+                        key: ValueKey('check'),
+                        isCheck: true,
+                        child: Icon(
+                          Icons.check_circle_rounded,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          ),
           ),
         ),
       ),

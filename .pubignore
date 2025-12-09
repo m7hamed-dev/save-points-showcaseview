@@ -1,0 +1,42 @@
+# Files and directories that should not be published to pub.dev
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Build artifacts
+build/
+.dart_tool/
+*.lock
+
+# Platform-specific files
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
+# Documentation that's not needed in published package
+PUBLISHING.md
+
+# Example app (already in example/ folder)
+example/
+
+# Test files (keep test/ folder but ignore coverage)
+coverage/
+
+# Git files
+.git/
+.gitignore
+
+# Other
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+
