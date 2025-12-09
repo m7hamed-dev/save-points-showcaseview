@@ -1,71 +1,40 @@
 # Showcase Coach
 
-A beautiful, modern showcase coach overlay for Flutter with smooth animations, glassmorphism effects, and step-by-step guided tours. Perfect for onboarding flows, feature highlights, and user guidance.
+Modern, design-forward showcase coach overlays for Flutter with smooth motion, glassmorphism, and sensible validation so you can guide users through product tours with confidence.
 
-![Showcase Coach](https://img.shields.io/pub/v/save_points_showcaseview)
+![Pub Version](https://img.shields.io/pub/v/save_points_showcaseview)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-## Features
-
-✨ **Modern Design**
-- Glassmorphism effects with backdrop blur
-- Smooth animations and transitions
-- Dark mode support
-- Customizable colors and styling
-
-🎯 **Easy to Use**
-- Simple API with minimal setup
-- Automatic validation of GlobalKeys
-- Smart scrolling to bring widgets into view
-- Conditional step visibility
-
-🎨 **Beautiful Animations**
-- Smooth step transitions
-- Pulsing highlight borders
-- Fade and slide animations
-- Customizable animation curves
+## Why use Showcase Coach?
+- **Design-first**: Glassmorphism, elevated cards, and balanced typography that fit Material 3.
+- **Safe by default**: Duplicate key detection, visibility checks, and user-friendly error dialogs.
+- **Flexible logic**: Per-step and global conditions (`shouldShow` / `showIf`) plus smart scrolling.
+- **Motion-aware**: Reduced-motion mode to turn off blur and heavy effects.
+- **Drop-in**: Simple API that works with any widget that has a `GlobalKey`.
 
 ## Installation
-
-Add this to your package's `pubspec.yaml` file:
-
+Add to `pubspec.yaml`:
 ```yaml
 dependencies:
   save_points_showcaseview: ^1.0.0
 ```
-
-Then run:
-
+Then install:
 ```bash
 flutter pub get
 ```
 
-## Quick Start
-
-### 1. Create GlobalKeys for your widgets
-
+## Quick start (3 steps)
+1) Create keys:
 ```dart
 final _buttonKey = GlobalKey();
 final _cardKey = GlobalKey();
 ```
-
-### 2. Assign keys to your widgets
-
+2) Attach keys:
 ```dart
-FilledButton(
-  key: _buttonKey,
-  onPressed: () {},
-  child: Text('Click me'),
-)
-
-Card(
-  key: _cardKey,
-  child: Text('Important card'),
-)
+FilledButton(key: _buttonKey, onPressed: () {}, child: const Text('Click me'));
+Card(key: _cardKey, child: const Text('Important card'));
 ```
-
-### 3. Show the showcase coach
-
+3) Show the coach:
 ```dart
 await ShowcaseCoach.show(
   context,
@@ -87,11 +56,9 @@ await ShowcaseCoach.show(
 );
 ```
 
-## Usage
-
-### Basic Example
-
+## Full example
 ```dart
+import 'package:flutter/material.dart';
 import 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
 class MyWidget extends StatefulWidget {
@@ -118,12 +85,8 @@ class _MyWidgetState extends State<MyWidget> {
           description: ['This card displays important information.'],
         ),
       ],
-      onDone: () {
-        print('Tour completed!');
-      },
-      onSkip: () {
-        print('Tour skipped!');
-      },
+      onSkip: () => debugPrint('Tour skipped'),
+      onDone: () => debugPrint('Tour completed'),
     );
   }
 
@@ -135,11 +98,14 @@ class _MyWidgetState extends State<MyWidget> {
           FilledButton(
             key: _buttonKey,
             onPressed: _startTour,
-            child: Text('Start Tour'),
+            child: const Text('Start Tour'),
           ),
           Card(
             key: _cardKey,
-            child: Text('Card content'),
+            child: const Padding(
+              padding: EdgeInsets.all(12),
+              child: Text('Card content'),
+            ),
           ),
         ],
       ),
@@ -148,125 +114,40 @@ class _MyWidgetState extends State<MyWidget> {
 }
 ```
 
-### Conditional Steps
+## Configuration highlights
+- `ShowcaseCoachConfig` lets you tune:
+  - `primaryColor`, `buttonColor`, `fontFamily`
+  - `cardStyle`: `glass` (default) or `normal`
+  - `overlayTintOpacity`
+  - `reduceMotion`: disables blur/heavy effects
+- Per-step logic:
+  - `shouldShow`: function returning bool (priority)
+  - `showIf`: simple bool (defaults to true)
 
-You can conditionally show steps based on your app's state:
+## Validation and safety
+- Duplicate GlobalKey detection before showing.
+- Visibility checks ensure targets are attached and scroll into view.
+- Friendly dialogs instead of silent failures or crashes.
 
+## Tips & best practices
+1) **Wait for layout** before showing:
 ```dart
-CoachStep(
-  targetKey: _premiumKey,
-  title: 'Premium Feature',
-  description: ['This is a premium feature.'],
-  shouldShow: () => user.isPremium, // Only show for premium users
-),
+WidgetsBinding.instance.addPostFrameCallback((_) {
+  ShowcaseCoach.show(context, steps: steps);
+});
 ```
+2) **Unique keys**: every step needs its own `GlobalKey`.
+3) **Concise copy**: short titles and descriptions improve completion.
+4) **Respect motion**: use `reduceMotion: true` where needed.
 
-Or use a simple boolean:
-
-```dart
-CoachStep(
-  targetKey: _featureKey,
-  title: 'New Feature',
-  description: ['Check out this new feature!'],
-  showIf: hasNewFeature,
-),
-```
-
-### Multiple Descriptions
-
-For longer explanations, you can provide multiple descriptions that users can swipe through:
-
-```dart
-CoachStep(
-  targetKey: _complexKey,
-  title: 'Complex Feature',
-  description: [
-    'This feature has multiple aspects.',
-    'Swipe to learn more about each one.',
-    'You can add as many descriptions as needed.',
-  ],
-),
-```
-
-### Global Conditions
-
-Control whether the entire showcase should be shown:
-
-```dart
-await ShowcaseCoach.show(
-  context,
-  steps: steps,
-  shouldShow: () => !hasSeenTourBefore,
-  // or
-  showIf: shouldShowTour,
-);
-```
-
-## API Reference
-
-### `ShowcaseCoach.show()`
-
-Displays the showcase coach overlay.
-
-**Parameters:**
-- `context` (required): BuildContext
-- `steps` (required): List of CoachStep objects
-- `onSkip` (optional): Callback when user skips the tour
-- `onDone` (optional): Callback when tour is completed
-- `shouldShow` (optional): Function that returns bool to conditionally show
-- `showIf` (optional): Simple boolean to conditionally show (defaults to true)
-
-### `CoachStep`
-
-Represents a single step in the showcase.
-
-**Properties:**
-- `targetKey` (required): GlobalKey of the widget to highlight
-- `title` (required): Title text displayed in the tooltip
-- `description` (required): List of description strings (supports multiple pages)
-- `shouldShow` (optional): Function that returns bool to conditionally show this step
-- `showIf` (optional): Simple boolean to conditionally show this step (defaults to true)
-
-## Validation
-
-The package automatically validates:
-
-- ✅ **Duplicate Keys**: Ensures each step uses a unique GlobalKey
-- ✅ **Visible Widgets**: Checks that all target widgets are visible and attached
-- ✅ **User-Friendly Errors**: Shows helpful error dialogs instead of crashing
-
-## Styling
-
-The showcase coach automatically adapts to your app's theme:
-
-- Uses your `ThemeData.colorScheme.primary` for accents
-- Supports both light and dark themes
-- Respects Material 3 design system
-
-## Best Practices
-
-1. **Wait for Layout**: Ensure widgets are built before showing the showcase:
-   ```dart
-   WidgetsBinding.instance.addPostFrameCallback((_) {
-     ShowcaseCoach.show(context, steps: steps);
-   });
-   ```
-
-2. **Unique Keys**: Always use unique GlobalKeys for each step
-
-3. **Descriptive Titles**: Use clear, concise titles for each step
-
-4. **Keep Descriptions Short**: For better UX, keep descriptions brief and actionable
+## Troubleshooting
+- **Nothing shows**: confirm `Overlay.of(context)` is available (e.g., use inside a `MaterialApp`), and run after the first frame.
+- **Step skipped**: check `shouldShow` / `showIf` for that step.
+- **Target not found**: ensure the widget has a unique `GlobalKey` and is mounted.
 
 ## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+Issues and PRs are welcome! Open one at:
+https://github.com/yourusername/save_points_showcaseview/issues
 
 ## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-If you encounter any issues or have feature requests, please file them on the [GitHub issue tracker](https://github.com/yourusername/save_points_showcaseview/issues).
-# save-points-showcaseview
+MIT License. See `LICENSE` for details.
