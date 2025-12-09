@@ -54,7 +54,7 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
           targetKey: _infoKey,
           title: 'Quick info icon',
           description: [
-            'Attach steps to icons, chips, or any tappable element.'
+            'Attach steps to icons, chips, or any tappable element.',
           ],
         ),
         CoachStep(
@@ -76,7 +76,7 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
           targetKey: _centerTextKey,
           title: 'Content highlight',
           description: [
-            'Call attention to messaging or tips inside the layout.'
+            'Call attention to messaging or tips inside the layout.',
           ],
         ),
       ],
@@ -283,7 +283,7 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
                         Row(
                           children: [
                             Icon(Icons.check_circle,
-                                color: colorScheme.primary),
+                                color: colorScheme.primary,),
                             const SizedBox(width: 8),
                             Text(
                               'Adaptive overlay respects motion settings',
@@ -295,7 +295,7 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
                         Row(
                           children: [
                             Icon(Icons.check_circle,
-                                color: colorScheme.primary),
+                                color: colorScheme.primary,),
                             const SizedBox(width: 8),
                             Text(
                               'Readable typography and balanced spacing',

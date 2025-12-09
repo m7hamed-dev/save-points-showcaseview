@@ -10,10 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseScheme = ColorScheme.fromSeed(
-      seedColor: Colors.indigo,
-      brightness: Brightness.light,
-    );
+    final baseScheme = ColorScheme.fromSeed(seedColor: Colors.indigo);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
