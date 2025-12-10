@@ -6,10 +6,10 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 
 ![Pub Version](https://img.shields.io/pub/v/save_points_showcaseview)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Showcase Coach Screenshot](assets/screenshot.png)
+![Showcase Coach Screenshot](https://raw.githubusercontent.com/m7hamed-dev/save-points-showcaseview/main/assets/screenshot.png)
 
 ## Preview
-![Showcase Coach Preview](assets/video.gif)
+![Showcase Coach Preview](https://raw.githubusercontent.com/m7hamed-dev/save-points-showcaseview/main/assets/video.gif)
 
 ## Why use Showcase Coach?
 - **Design-first**: Glassmorphism, elevated cards, and balanced typography that fit Material 3.
@@ -153,7 +153,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
 
 ## Contributing
 Issues and PRs are welcome! Open one at:
-https://github.com/yourusername/save_points_showcaseview/issues
+https://github.com/m7hamed-dev/save-points-showcaseview/issues
 
 ## License
 MIT License. See `LICENSE` for details.
