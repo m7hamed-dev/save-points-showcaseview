@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2024-12-10
+
+### Fixed
+- Updated repository URLs in README and pubspec.yaml to match actual GitHub repository
+- Fixed image URLs to use absolute GitHub raw URLs for proper display on pub.dev
+- Compressed preview GIF for better pub.dev compatibility
+
 ## [1.0.0] - 2024-12-19
 
 ### Added
