@@ -23,9 +23,6 @@ web/
 # Documentation that's not needed in published package
 PUBLISHING.md
 
-# Example app (already in example/ folder)
-example/
-
 # Test files (keep test/ folder but ignore coverage)
 coverage/
 
