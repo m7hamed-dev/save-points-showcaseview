@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+///### Phase model
 class Phase {
   const Phase({
     required this.title,
