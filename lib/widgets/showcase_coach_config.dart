@@ -49,7 +49,7 @@ class ShowcaseCoachConfig {
   }
 }
 
-/// Preset card styles.
+// ### Preset card styles.
 enum ShowcaseCoachCardStyle {
   glass,
   normal,
