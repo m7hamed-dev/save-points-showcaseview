@@ -9,7 +9,7 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 ![Showcase Coach Screenshot](https://raw.githubusercontent.com/m7hamed-dev/save-points-showcaseview/main/assets/screenshot.png)
 
 ## Preview
-![Showcase Coach Preview](https://raw.githubusercontent.com/m7hamed-dev/save-points-showcaseview/main/assets/video.gif)
+![Showcase Coach Preview](https://cdn.jsdelivr.net/gh/m7hamed-dev/save_points_sa_privacy_polices@main/showcaseview-video.gif)
 
 ## Why use Showcase Coach?
 - **Design-first**: Glassmorphism, elevated cards, and balanced typography that fit Material 3.
