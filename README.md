@@ -16,13 +16,15 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 - **Safe by default**: Duplicate key detection, visibility checks, and user-friendly error dialogs.
 - **Flexible logic**: Per-step and global conditions (`shouldShow` / `showIf`) plus smart scrolling.
 - **Motion-aware**: Reduced-motion mode to turn off blur and heavy effects.
+- **Accessible**: Built-in accessibility support with semantic labels and proper tap targets.
+- **Well-documented**: Comprehensive API documentation with examples and best practices.
 - **Drop-in**: Simple API that works with any widget that has a `GlobalKey`.
 
 ## Installation
 Add to `pubspec.yaml`:
 ```yaml
 dependencies:
-  save_points_showcaseview: ^1.0.0
+  save_points_showcaseview: ^1.0.2
 ```
 Then install:
 ```bash
@@ -134,6 +136,13 @@ class _MyWidgetState extends State<MyWidget> {
 - Duplicate GlobalKey detection before showing.
 - Visibility checks ensure targets are attached and scroll into view.
 - Friendly dialogs instead of silent failures or crashes.
+- Comprehensive error messages with actionable guidance.
+
+## Accessibility
+- Semantic labels for screen readers.
+- Minimum tap target sizes (48x48) for better touch accessibility.
+- Proper button semantics for assistive technologies.
+- Full keyboard navigation support.
 
 ## Tips & best practices
 1) **Wait for layout** before showing:
@@ -145,6 +154,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
 2) **Unique keys**: every step needs its own `GlobalKey`.
 3) **Concise copy**: short titles and descriptions improve completion.
 4) **Respect motion**: use `reduceMotion: true` where needed.
+5) **Accessibility**: The library includes built-in accessibility support, but ensure your target widgets are also accessible.
 
 ## Troubleshooting
 - **Nothing shows**: confirm `Overlay.of(context)` is available (e.g., use inside a `MaterialApp`), and run after the first frame.
