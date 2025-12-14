@@ -6,7 +6,7 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 
 ![Pub Version](https://img.shields.io/pub/v/save_points_showcaseview)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Showcase Coach Screenshot](https://raw.githubusercontent.com/m7hamed-dev/save-points-showcaseview/main/assets/screenshot.png)
+<!-- ![Showcase Coach Screenshot](https://raw.githubusercontent.com/m7hamed-dev/save-points-showcaseview/main/assets/screenshot.png) -->
 
 ## Preview
 ![Showcase Coach Preview](https://cdn.jsdelivr.net/gh/m7hamed-dev/save_points_sa_privacy_polices@main/showcaseview-video.gif)
