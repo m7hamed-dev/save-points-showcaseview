@@ -130,24 +130,28 @@ class _CardSurfaceState extends State<_CardSurface>
                     if (widget.onSkip != null)
                       Material(
                         color: Colors.transparent,
-                        child: InkWell(
-                          onTap: widget.onSkip,
-                          borderRadius: BorderRadius.circular(14),
-                          splashColor: widget.colorScheme.primary
-                              .withValues(alpha: 0.08),
-                          highlightColor: widget.colorScheme.primary
-                              .withValues(alpha: 0.05),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 14,
-                            ),
-                            child: Text(
-                              'Skip',
-                              style: widget.buttonStyle.copyWith(
-                                color: widget.colorScheme.onSurface
-                                    .withValues(alpha: 0.65),
-                                letterSpacing: 0.1,
+                        child: Semantics(
+                          button: true,
+                          label: 'Skip tour',
+                          child: InkWell(
+                            onTap: widget.onSkip,
+                            borderRadius: BorderRadius.circular(14),
+                            splashColor: widget.colorScheme.primary
+                                .withValues(alpha: 0.08),
+                            highlightColor: widget.colorScheme.primary
+                                .withValues(alpha: 0.05),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 14,
+                              ),
+                              child: Text(
+                                'Skip',
+                                style: widget.buttonStyle.copyWith(
+                                  color: widget.colorScheme.onSurface
+                                      .withValues(alpha: 0.65),
+                                  letterSpacing: 0.1,
+                                ),
                               ),
                             ),
                           ),

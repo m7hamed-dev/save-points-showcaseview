@@ -1,9 +1,27 @@
-import 'package:flutter/material.dart';
-import 'package:save_points_showcaseview/widgets/coach_step.dart';
+part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
+/// Validates showcase coach steps and their associated GlobalKeys.
+///
+/// This class provides static validation methods to ensure that:
+/// - All GlobalKeys are unique across steps
+/// - All GlobalKeys are attached to visible widgets in the widget tree
+///
+/// Validation failures return descriptive error messages that can be
+/// displayed to users or developers.
+///
+/// This class is internal to the package and should not be used directly
+/// by consumers.
 class ShowcaseCoachValidator {
+  ShowcaseCoachValidator._();
+
   /// Validates that all GlobalKeys in the steps are unique.
-  /// Returns error message if duplicates are found, null otherwise.
+  ///
+  /// Each step must use a different [GlobalKey]. If duplicate keys are
+  /// found, returns a descriptive error message listing which steps share
+  /// the same key.
+  ///
+  /// Returns `null` if validation passes, or an error message string if
+  /// duplicates are found.
   static String? validateSteps(List<CoachStep> steps) {
     final keyOccurrences = <GlobalKey, List<int>>{};
 
@@ -36,12 +54,22 @@ class ShowcaseCoachValidator {
   }
 
   /// Validates that all GlobalKeys are attached and visible in the widget tree.
-  /// Returns error message if any keys are not found, null otherwise.
-  /// Optionally retries checking keys if they're not ready yet.
+  ///
+  /// This method checks that:
+  /// - Each key has a valid [BuildContext]
+  /// - Each key's render object is attached to the render tree
+  /// - Each key's render object has a non-zero size
+  ///
+  /// The method will retry validation up to [maxRetries] times with
+  /// [retryDelay] between attempts, allowing widgets time to be built
+  /// and laid out.
+  ///
+  /// Returns `null` if all keys are valid, or an error message string
+  /// listing which steps have invalid or missing keys.
   static Future<String?> validateKeysVisible(
     List<CoachStep> steps, {
-    int maxRetries = 10,
-    Duration retryDelay = const Duration(milliseconds: 50),
+    int maxRetries = ShowcaseCoachConstants.maxValidationRetries,
+    Duration retryDelay = ShowcaseCoachConstants.validationRetryDelay,
   }) async {
     for (var attempt = 0; attempt < maxRetries; attempt++) {
       final missingKeys = <int>[];

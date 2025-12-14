@@ -1,7 +1,22 @@
-import 'package:flutter/material.dart';
+part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
+/// Utility class for displaying showcase coach error dialogs.
+///
+/// This class provides a consistent way to display validation errors
+/// and other issues to users in a friendly, non-technical format.
+///
+/// This class is internal to the package and should not be used directly
+/// by consumers.
 class ShowcaseCoachError {
-  /// Shows an error dialog to the user
+  ShowcaseCoachError._();
+
+  /// Shows an error dialog to the user with the given message.
+  ///
+  /// The dialog displays a standard error icon and allows the user to
+  /// dismiss it. This is used for validation failures and other issues
+  /// that prevent the showcase coach from displaying.
+  ///
+  /// The dialog will only be shown if [context] is still mounted.
   static Future<void> showErrorDialog(
     BuildContext context,
     String message,

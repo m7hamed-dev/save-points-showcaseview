@@ -413,17 +413,20 @@ class _CoachOverlay extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: _TooltipCard(
-                                key: ValueKey(
-                                  'tooltip_${step.title}_${step.targetKey.hashCode}',
+                              child: Semantics(
+                                label: 'Showcase coach: ${step.title}',
+                                child: _TooltipCard(
+                                  key: ValueKey(
+                                    'tooltip_${step.title}_${step.targetKey.hashCode}',
+                                  ),
+                                  maxWidth: cardMaxWidth,
+                                  title: step.title,
+                                  description: step.description,
+                                  isLast: isLast,
+                                  onNext: onNext,
+                                  onSkip: onSkip,
+                                  config: config,
                                 ),
-                                maxWidth: cardMaxWidth,
-                                title: step.title,
-                                description: step.description,
-                                isLast: isLast,
-                                onNext: onNext,
-                                onSkip: onSkip,
-                                config: config,
                               ),
                             ),
                           ),

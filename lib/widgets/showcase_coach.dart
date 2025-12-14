@@ -1,6 +1,95 @@
 part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
+/// Main class for displaying showcase coach overlays.
+///
+/// This class provides a static [show] method to display a guided tour
+/// that highlights widgets and provides step-by-step instructions.
+///
+/// ## Features
+///
+/// - Automatic validation of GlobalKeys
+/// - Smart scrolling to bring widgets into view
+/// - Conditional step visibility
+/// - Smooth animations and transitions
+/// - Accessibility support
+/// - Customizable theming
+///
+/// ## Example
+///
+/// ```dart
+/// await ShowcaseCoach.show(
+///   context,
+///   steps: [
+///     CoachStep(
+///       targetKey: buttonKey,
+///       title: 'Welcome!',
+///       description: ['This is your first step.'],
+///     ),
+///   ],
+///   onDone: () => print('Tour completed'),
+///   onSkip: () => print('Tour skipped'),
+/// );
+/// ```
 class ShowcaseCoach {
+  /// Private constructor to prevent instantiation.
+  ShowcaseCoach._();
+
+  /// Displays a showcase coach overlay with the given steps.
+  ///
+  /// This method will:
+  /// 1. Validate that all GlobalKeys are unique and visible
+  /// 2. Filter steps based on their visibility conditions
+  /// 3. Display an overlay with tooltips and highlights
+  /// 4. Handle navigation between steps
+  ///
+  /// The overlay will remain visible until the user completes the tour or
+  /// skips it. The method returns a [Future] that completes when the overlay
+  /// is dismissed.
+  ///
+  /// ## Parameters
+  ///
+  /// - [context]: The build context. Must have an [Overlay] available
+  ///   (typically inside a [MaterialApp]).
+  /// - [steps]: List of [CoachStep] objects defining the tour. Must not be
+  ///   empty. Steps with `isVisible == false` will be automatically filtered.
+  /// - [config]: Optional configuration for customizing appearance and behavior.
+  /// - [onSkip]: Optional callback invoked when the user skips the tour.
+  /// - [onDone]: Optional callback invoked when the user completes the tour.
+  /// - [shouldShow]: Optional global condition function. If provided and
+  ///   returns `false`, the entire tour will be skipped.
+  /// - [showIf]: Simple boolean flag for global visibility. Only used if
+  ///   [shouldShow] is not provided. Defaults to `true`.
+  ///
+  /// ## Throws
+  ///
+  /// This method does not throw exceptions. Instead, it displays user-friendly
+  /// error dialogs for validation failures (duplicate keys, missing widgets, etc.).
+  ///
+  /// ## Example
+  ///
+  /// ```dart
+  /// await ShowcaseCoach.show(
+  ///   context,
+  ///   steps: [
+  ///     CoachStep(
+  ///       targetKey: _buttonKey,
+  ///       title: 'Action Button',
+  ///       description: ['Tap this button to perform an action.'],
+  ///     ),
+  ///   ],
+  ///   config: ShowcaseCoachConfig(
+  ///     primaryColor: Colors.blue,
+  ///     reduceMotion: false,
+  ///   ),
+  ///   onDone: () {
+  ///     print('Tour completed!');
+  ///   },
+  /// );
+  /// ```
+  ///
+  /// See also:
+  /// - [CoachStep] for defining tour steps
+  /// - [ShowcaseCoachConfig] for customization options
   static Future<void> show(
     BuildContext context, {
     required List<CoachStep> steps,
@@ -59,7 +148,10 @@ class ShowcaseCoach {
     final controller = ValueNotifier<int>(0);
     late OverlayEntry entry;
 
-    /// Scrolls the target widget into view if it's not visible
+    /// Scrolls the target widget into view if it's not visible.
+    ///
+    /// Checks if the widget is currently visible on screen, and if not,
+    /// scrolls it into view with a smooth animation.
     Future<void> ensureVisible(GlobalKey key) async {
       final context = key.currentContext;
       if (context == null) return;
@@ -81,12 +173,12 @@ class ShowcaseCoach {
         // Scroll into view
         await Scrollable.ensureVisible(
           context,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOutCubic,
-          alignment: 0.5, // Center the widget
+          duration: ShowcaseCoachConstants.scrollAnimationDuration,
+          curve: ShowcaseCoachConstants.scrollAnimationCurve,
+          alignment: ShowcaseCoachConstants.scrollAlignment,
         );
-        // Wait a bit for scroll animation to complete
-        await Future.delayed(const Duration(milliseconds: 450));
+        // Wait for scroll animation to complete
+        await Future.delayed(ShowcaseCoachConstants.scrollAnimationDelay);
       }
     }
 
