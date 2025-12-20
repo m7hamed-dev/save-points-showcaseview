@@ -32,6 +32,7 @@ class ShowcaseCoachConfig {
     this.overlayTintOpacity = _defaultOverlayTintOpacity,
     this.cardStyle = ShowcaseCoachCardStyle.glass,
     this.reduceMotion = false,
+    this.showProgressIndicator = true,
   });
 
   /// Global font family applied to all coach text.
@@ -90,6 +91,14 @@ class ShowcaseCoachConfig {
   ///
   /// Defaults to [ShowcaseCoachCardStyle.glass].
   final ShowcaseCoachCardStyle cardStyle;
+
+  /// Whether to show a progress indicator (e.g., "Step 2 of 5").
+  ///
+  /// When enabled, displays the current step number and total steps
+  /// in the tooltip card header.
+  ///
+  /// Defaults to `true`.
+  final bool showProgressIndicator;
 
   /// Merges a base [TextStyle] with an optional override.
   ///

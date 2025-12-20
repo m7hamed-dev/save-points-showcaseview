@@ -27,6 +27,7 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
         overlayTintOpacity: 0.12,
         cardStyle: ShowcaseCoachCardStyle.normal, // higher-contrast card
         reduceMotion: true, // disables blur behind overlay for clarity
+        showProgressIndicator: true, // Show step progress
         titleStyle: TextStyle(
           fontWeight: FontWeight.w800,
           letterSpacing: -0.4,
@@ -41,6 +42,16 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
           fontWeight: FontWeight.w700,
         ),
       ),
+      // Step change callbacks for analytics/tracking
+      onStepChanged: (current, total) {
+        debugPrint('Step $current of $total');
+      },
+      onStepStart: (index, step) {
+        debugPrint('Started step: ${step.title}');
+      },
+      onStepComplete: (index, step) {
+        debugPrint('Completed step: ${step.title}');
+      },
       steps: [
         CoachStep(
           targetKey: _cardKey,
@@ -56,11 +67,17 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
           description: [
             'Attach steps to icons, chips, or any tappable element.',
           ],
+          // Custom button text example
+          nextButtonText: 'Got it!',
         ),
         CoachStep(
           targetKey: _ctaKey,
           title: 'Primary call-to-action',
           description: ['Highlight the action you want users to take next.'],
+          // Custom action on next
+          onNext: () {
+            debugPrint('Custom action: User proceeding to CTA step');
+          },
         ),
         CoachStep(
           targetKey: _homeKey,
@@ -71,6 +88,8 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
           targetKey: _settingsKey,
           title: 'Another navigation item',
           description: ['You can guide users through multiple destinations.'],
+          // Hide skip button for important step
+          showSkipButton: false,
         ),
         CoachStep(
           targetKey: _centerTextKey,
@@ -78,8 +97,16 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
           description: [
             'Call attention to messaging or tips inside the layout.',
           ],
+          // Custom button text for last step
+          nextButtonText: 'Finish',
         ),
       ],
+      onDone: () {
+        debugPrint('Tour completed!');
+      },
+      onSkip: () {
+        debugPrint('Tour skipped');
+      },
     );
   }
 

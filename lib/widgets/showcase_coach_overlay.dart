@@ -190,7 +190,7 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
   }
 }
 
-class _CoachOverlay extends StatelessWidget {
+class _CoachOverlay extends StatefulWidget {
   const _CoachOverlay({
     required this.step,
     required this.rect,
@@ -198,6 +198,8 @@ class _CoachOverlay extends StatelessWidget {
     required this.onNext,
     this.onSkip,
     this.config,
+    this.currentStep,
+    this.totalSteps,
   });
 
   final CoachStep step;
@@ -206,6 +208,84 @@ class _CoachOverlay extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback? onSkip;
   final ShowcaseCoachConfig? config;
+  final int? currentStep;
+  final int? totalSteps;
+
+  @override
+  State<_CoachOverlay> createState() => _CoachOverlayState();
+}
+
+class _CoachOverlayState extends State<_CoachOverlay> {
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    // Request focus for keyboard handling
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
+          event.logicalKey == LogicalKeyboardKey.enter) {
+        if (!widget.isLast) {
+          widget.onNext();
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.escape) {
+        widget.onSkip?.call();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyboardListener(
+      focusNode: _focusNode,
+      onKeyEvent: _handleKeyEvent,
+      child: _CoachOverlayContent(
+        step: widget.step,
+        rect: widget.rect,
+        isLast: widget.isLast,
+        onNext: widget.onNext,
+        onSkip: widget.onSkip,
+        config: widget.config,
+        currentStep: widget.currentStep,
+        totalSteps: widget.totalSteps,
+      ),
+    );
+  }
+}
+
+class _CoachOverlayContent extends StatelessWidget {
+  const _CoachOverlayContent({
+    required this.step,
+    required this.rect,
+    required this.isLast,
+    required this.onNext,
+    this.onSkip,
+    this.config,
+    this.currentStep,
+    this.totalSteps,
+  });
+
+  final CoachStep step;
+  final Rect? rect;
+  final bool isLast;
+  final VoidCallback onNext;
+  final VoidCallback? onSkip;
+  final ShowcaseCoachConfig? config;
+  final int? currentStep;
+  final int? totalSteps;
 
   @override
   Widget build(BuildContext context) {
@@ -426,6 +506,9 @@ class _CoachOverlay extends StatelessWidget {
                                   onNext: onNext,
                                   onSkip: onSkip,
                                   config: config,
+                                  currentStep: currentStep,
+                                  totalSteps: totalSteps,
+                                  step: step,
                                 ),
                               ),
                             ),
@@ -523,6 +606,10 @@ class _CoachOverlay extends StatelessWidget {
                           isLast: isLast,
                           onNext: onNext,
                           onSkip: onSkip,
+                          config: config,
+                          currentStep: currentStep,
+                          totalSteps: totalSteps,
+                          step: step,
                         ),
                       ),
                     ),

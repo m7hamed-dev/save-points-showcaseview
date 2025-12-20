@@ -10,6 +10,9 @@ class _TooltipCard extends StatelessWidget {
     this.onSkip,
     required this.maxWidth,
     this.config,
+    this.currentStep,
+    this.totalSteps,
+    this.step,
   });
 
   final String title;
@@ -19,6 +22,9 @@ class _TooltipCard extends StatelessWidget {
   final VoidCallback? onSkip;
   final double maxWidth;
   final ShowcaseCoachConfig? config;
+  final int? currentStep;
+  final int? totalSteps;
+  final CoachStep? step;
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +118,11 @@ class _TooltipCard extends StatelessWidget {
                     titleStyle: titleStyle,
                     bodyStyle: bodyStyle,
                     buttonStyle: buttonStyle,
+                    currentStep: currentStep,
+                    totalSteps: totalSteps,
+                    showProgressIndicator:
+                        config?.showProgressIndicator ?? true,
+                    step: step,
                   ),
                 )
               : _CardSurface(
@@ -126,6 +137,10 @@ class _TooltipCard extends StatelessWidget {
                   titleStyle: titleStyle,
                   bodyStyle: bodyStyle,
                   buttonStyle: buttonStyle,
+                  currentStep: currentStep,
+                  totalSteps: totalSteps,
+                  showProgressIndicator: config?.showProgressIndicator ?? true,
+                  step: step,
                 ),
         ),
       ),

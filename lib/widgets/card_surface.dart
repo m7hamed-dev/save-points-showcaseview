@@ -13,6 +13,10 @@ class _CardSurface extends StatefulWidget {
     required this.titleStyle,
     required this.bodyStyle,
     required this.buttonStyle,
+    this.currentStep,
+    this.totalSteps,
+                    this.showProgressIndicator = true,
+    this.step,
   });
 
   final Color primary;
@@ -26,6 +30,10 @@ class _CardSurface extends StatefulWidget {
   final TextStyle titleStyle;
   final TextStyle bodyStyle;
   final TextStyle buttonStyle;
+  final int? currentStep;
+  final int? totalSteps;
+  final bool showProgressIndicator;
+  final CoachStep? step;
 
   @override
   State<_CardSurface> createState() => _CardSurfaceState();
@@ -90,6 +98,54 @@ class _CardSurfaceState extends State<_CardSurface>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (widget.showProgressIndicator &&
+                    widget.currentStep != null &&
+                    widget.totalSteps != null &&
+                    widget.totalSteps! > 1)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Step ${widget.currentStep} of ${widget.totalSteps}',
+                          style: widget.bodyStyle.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: widget.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                        const Spacer(),
+                        Expanded(
+                          child: Container(
+                            height: 3,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2),
+                              color: widget.colorScheme.outline
+                                  .withValues(alpha: 0.15),
+                            ),
+                            child: FractionallySizedBox(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: widget.currentStep! /
+                                  widget.totalSteps!,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      widget.primary,
+                                      widget.primary.withValues(alpha: 0.8),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 Text(
                   widget.title,
                   style: widget.titleStyle.copyWith(
@@ -127,14 +183,18 @@ class _CardSurfaceState extends State<_CardSurface>
                 const SizedBox(height: 18),
                 Row(
                   children: [
-                    if (widget.onSkip != null)
+                    if (widget.onSkip != null &&
+                        (widget.step?.showSkipButton ?? true))
                       Material(
                         color: Colors.transparent,
                         child: Semantics(
                           button: true,
                           label: 'Skip tour',
                           child: InkWell(
-                            onTap: widget.onSkip,
+                            onTap: () {
+                              widget.step?.onSkip?.call();
+                              widget.onSkip?.call();
+                            },
                             borderRadius: BorderRadius.circular(14),
                             splashColor: widget.colorScheme.primary
                                 .withValues(alpha: 0.08),
@@ -146,7 +206,7 @@ class _CardSurfaceState extends State<_CardSurface>
                                 vertical: 14,
                               ),
                               child: Text(
-                                'Skip',
+                                widget.step?.skipButtonText ?? 'Skip',
                                 style: widget.buttonStyle.copyWith(
                                   color: widget.colorScheme.onSurface
                                       .withValues(alpha: 0.65),
@@ -161,7 +221,11 @@ class _CardSurfaceState extends State<_CardSurface>
                     _AnimatedButton(
                       buttonColor: widget.buttonColor,
                       isLast: widget.isLast,
-                      onNext: widget.onNext,
+                      onNext: () {
+                        widget.step?.onNext?.call();
+                        widget.onNext();
+                      },
+                      buttonText: widget.step?.nextButtonText,
                     ),
                   ],
                 ),
@@ -179,11 +243,13 @@ class _AnimatedButton extends StatefulWidget {
     required this.buttonColor,
     required this.isLast,
     required this.onNext,
+    this.buttonText,
   });
 
   final Color buttonColor;
   final bool isLast;
   final VoidCallback onNext;
+  final String? buttonText;
 
   @override
   State<_AnimatedButton> createState() => _AnimatedButtonState();
@@ -306,7 +372,8 @@ class _AnimatedButtonState extends State<_AnimatedButton>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      widget.isLast ? 'Done' : 'Next',
+                      widget.buttonText ??
+                          (widget.isLast ? 'Done' : 'Next'),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,

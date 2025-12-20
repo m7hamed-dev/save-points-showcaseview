@@ -59,6 +59,12 @@ class ShowcaseCoach {
   ///   returns `false`, the entire tour will be skipped.
   /// - [showIf]: Simple boolean flag for global visibility. Only used if
   ///   [shouldShow] is not provided. Defaults to `true`.
+  /// - [onStepChanged]: Optional callback invoked whenever the current step
+  ///   changes. Provides the current step index (1-based) and total step count.
+  /// - [onStepStart]: Optional callback invoked when a step becomes active.
+  ///   Provides the step index (0-based) and the [CoachStep] object.
+  /// - [onStepComplete]: Optional callback invoked when a step is completed
+  ///   (user presses Next). Provides the step index (0-based) and the [CoachStep] object.
   ///
   /// ## Throws
   ///
@@ -98,6 +104,9 @@ class ShowcaseCoach {
     VoidCallback? onDone,
     bool Function()? shouldShow,
     bool showIf = true,
+    void Function(int currentStep, int totalSteps)? onStepChanged,
+    void Function(int stepIndex, CoachStep step)? onStepStart,
+    void Function(int stepIndex, CoachStep step)? onStepComplete,
   }) async {
     if (steps.isEmpty) return;
 
@@ -197,12 +206,25 @@ class ShowcaseCoach {
     // Ensure first step is visible before showing overlay
     await ensureVisible(visibleSteps[0].targetKey);
 
+    // Call onStepStart for the first step
+    onStepStart?.call(0, visibleSteps[0]);
+    onStepChanged?.call(1, visibleSteps.length);
+
     entry = OverlayEntry(
       builder: (context) {
         return ValueListenableBuilder<int>(
           valueListenable: controller,
           builder: (context, index, _) {
             final step = visibleSteps[index];
+
+            // Call onStepChanged whenever step changes
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              onStepChanged?.call(index + 1, visibleSteps.length);
+              // Call onStepStart for new step (after first)
+              if (index > 0) {
+                onStepStart?.call(index, step);
+              }
+            });
 
             // Ensure current step is visible when it changes
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -214,7 +236,12 @@ class ShowcaseCoach {
               step: step,
               rect: rect,
               isLast: index == visibleSteps.length - 1,
+              currentStep: index + 1,
+              totalSteps: visibleSteps.length,
               onNext: () {
+                // Call onStepComplete before moving to next
+                onStepComplete?.call(index, step);
+                
                 if (index == visibleSteps.length - 1) {
                   onDone?.call();
                   close();

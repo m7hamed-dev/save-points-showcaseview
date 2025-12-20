@@ -36,6 +36,11 @@ class CoachStep {
     required this.description,
     this.shouldShow,
     this.showIf = true,
+    this.onNext,
+    this.onSkip,
+    this.nextButtonText,
+    this.skipButtonText,
+    this.showSkipButton = true,
   });
 
   /// The [GlobalKey] attached to the widget to highlight.
@@ -73,6 +78,59 @@ class CoachStep {
   /// showIf: isFeatureEnabled
   /// ```
   final bool showIf;
+
+  /// Custom action to execute when "Next" button is pressed.
+  ///
+  /// If provided, this is called before advancing to the next step.
+  /// This allows you to perform custom actions like navigation, animations,
+  /// or state updates before moving to the next step.
+  ///
+  /// ```dart
+  /// onNext: () {
+  ///   Navigator.push(context, MaterialPageRoute(builder: (_) => NextScreen()));
+  /// }
+  /// ```
+  final VoidCallback? onNext;
+
+  /// Custom action to execute when "Skip" button is pressed.
+  ///
+  /// If provided, this is called before skipping the tour.
+  /// This allows you to perform custom cleanup or tracking.
+  ///
+  /// ```dart
+  /// onSkip: () {
+  ///   analytics.logEvent('tour_skipped');
+  /// }
+  /// ```
+  final VoidCallback? onSkip;
+
+  /// Custom text for the "Next" button.
+  ///
+  /// If not provided, defaults to "Next" or "Done" for the last step.
+  ///
+  /// ```dart
+  /// nextButtonText: 'Continue'
+  /// ```
+  final String? nextButtonText;
+
+  /// Custom text for the "Skip" button.
+  ///
+  /// If not provided, defaults to "Skip".
+  ///
+  /// ```dart
+  /// skipButtonText: 'Maybe Later'
+  /// ```
+  final String? skipButtonText;
+
+  /// Whether to show the skip button for this step.
+  ///
+  /// Defaults to `true`. Set to `false` to hide the skip button for
+  /// important steps that users must complete.
+  ///
+  /// ```dart
+  /// showSkipButton: false  // Hide skip for critical steps
+  /// ```
+  final bool showSkipButton;
 
   /// Checks if this step should be displayed based on its conditions.
   ///
