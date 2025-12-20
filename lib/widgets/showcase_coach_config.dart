@@ -33,6 +33,13 @@ class ShowcaseCoachConfig {
     this.cardStyle = ShowcaseCoachCardStyle.glass,
     this.reduceMotion = false,
     this.showProgressIndicator = true,
+    this.enableTransitions,
+    this.transitionDuration,
+    this.transitionCurve,
+    this.backdropTransitionDuration,
+    this.gradientTransitionDuration,
+    this.highlightTransitionDuration,
+    this.cardTransitionDuration,
   });
 
   /// Global font family applied to all coach text.
@@ -99,6 +106,71 @@ class ShowcaseCoachConfig {
   ///
   /// Defaults to `true`.
   final bool showProgressIndicator;
+
+  /// Whether to enable transition animations between steps.
+  ///
+  /// When `true`, smooth animations are used when transitioning between steps.
+  /// When `false`, transitions are instant.
+  ///
+  /// If not provided, defaults to `true` unless [reduceMotion] is `true`,
+  /// in which case it defaults to `false`.
+  ///
+  /// ```dart
+  /// enableTransitions: false  // Instant transitions
+  /// ```
+  final bool? enableTransitions;
+
+  /// Duration for all transition animations.
+  ///
+  /// If not provided, uses default durations for each transition type.
+  /// This is a convenience option; for fine-grained control, use the
+  /// specific duration properties.
+  ///
+  /// ```dart
+  /// transitionDuration: Duration(milliseconds: 300)  // Faster transitions
+  /// ```
+  final Duration? transitionDuration;
+
+  /// Curve for transition animations.
+  ///
+  /// If not provided, defaults to [Curves.easeOutCubic].
+  ///
+  /// ```dart
+  /// transitionCurve: Curves.easeInOut  // Smoother transitions
+  /// ```
+  final Curve? transitionCurve;
+
+  /// Duration for backdrop hole transitions.
+  ///
+  /// Controls how long it takes for the backdrop hole to animate when
+  /// moving between highlighted widgets.
+  ///
+  /// If not provided, uses [transitionDuration] or defaults to 450ms.
+  final Duration? backdropTransitionDuration;
+
+  /// Duration for gradient overlay transitions.
+  ///
+  /// Controls how long it takes for the radial gradient overlay to animate
+  /// when moving between highlighted widgets.
+  ///
+  /// If not provided, uses [transitionDuration] or defaults to 500ms.
+  final Duration? gradientTransitionDuration;
+
+  /// Duration for highlight position transitions.
+  ///
+  /// Controls how long it takes for the highlight border to animate to
+  /// a new position when moving between highlighted widgets.
+  ///
+  /// If not provided, uses [transitionDuration] or defaults to 700ms.
+  final Duration? highlightTransitionDuration;
+
+  /// Duration for tooltip card transitions.
+  ///
+  /// Controls how long it takes for the tooltip card to animate when
+  /// transitioning between steps.
+  ///
+  /// If not provided, uses [transitionDuration] or defaults to 600ms.
+  final Duration? cardTransitionDuration;
 
   /// Merges a base [TextStyle] with an optional override.
   ///

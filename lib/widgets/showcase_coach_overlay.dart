@@ -295,14 +295,47 @@ class _CoachOverlayContent extends StatelessWidget {
 
     final blurSigma = (config?.reduceMotion ?? false) ? 0.0 : 8.0;
 
+    // Determine if transitions should be enabled
+    final transitionsEnabled =
+        config?.enableTransitions ?? !(config?.reduceMotion ?? false);
+
+    // Get transition durations with fallbacks
+    final backdropDuration = transitionsEnabled
+        ? (config?.backdropTransitionDuration ??
+            config?.transitionDuration ??
+            ShowcaseCoachConstants.overlayTransitionDuration)
+        : Duration.zero;
+    final gradientDuration = transitionsEnabled
+        ? (config?.gradientTransitionDuration ??
+            config?.transitionDuration ??
+            ShowcaseCoachConstants.gradientTransitionDuration)
+        : Duration.zero;
+    final highlightDuration = transitionsEnabled
+        ? (config?.highlightTransitionDuration ??
+            config?.transitionDuration ??
+            ShowcaseCoachConstants.highlightAnimationDuration)
+        : Duration.zero;
+    final cardDuration = transitionsEnabled
+        ? (config?.cardTransitionDuration ??
+            config?.transitionDuration ??
+            ShowcaseCoachConstants.cardTransitionDuration)
+        : Duration.zero;
+
+    // Get transition curves with fallbacks
+    final transitionCurve =
+        config?.transitionCurve ?? ShowcaseCoachConstants.defaultAnimationCurve;
+
     final content = Stack(
       children: [
         Positioned.fill(
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 450),
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
+            duration: backdropDuration,
+            switchInCurve: transitionCurve,
+            switchOutCurve: transitionCurve,
             transitionBuilder: (child, animation) {
+              if (!transitionsEnabled) {
+                return child;
+              }
               // Smooth fade with slight scale for depth
               final fade = CurvedAnimation(
                 parent: animation,
@@ -325,10 +358,13 @@ class _CoachOverlayContent extends StatelessWidget {
         if (rect != null)
           Positioned.fill(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
+              duration: gradientDuration,
+              switchInCurve: transitionCurve,
+              switchOutCurve: transitionCurve,
               transitionBuilder: (child, animation) {
+                if (!transitionsEnabled) {
+                  return child;
+                }
                 // Combine fade with subtle scale for smoother appearance
                 final fade = CurvedAnimation(
                   parent: animation,
@@ -338,7 +374,7 @@ class _CoachOverlayContent extends StatelessWidget {
                 final scale = Tween<double>(begin: 0.95, end: 1.0).animate(
                   CurvedAnimation(
                     parent: animation,
-                    curve: Curves.easeOutCubic,
+                    curve: transitionCurve,
                   ),
                 );
 
@@ -379,8 +415,8 @@ class _CoachOverlayContent extends StatelessWidget {
         /// Highlight
         if (rect != null)
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 700),
-            curve: Curves.easeOutCubic,
+            duration: highlightDuration,
+            curve: transitionCurve,
             left: rect!.left,
             top: rect!.top,
             width: rect!.width,
@@ -435,14 +471,17 @@ class _CoachOverlayContent extends StatelessWidget {
                         child: RepaintBoundary(
                           child: Center(
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 600),
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeInCubic,
+                              duration: cardDuration,
+                              switchInCurve: transitionCurve,
+                              switchOutCurve: transitionCurve,
                               transitionBuilder: (child, animation) {
+                                if (!transitionsEnabled) {
+                                  return child;
+                                }
                                 // Smooth emphasis curve for both enter/exit
                                 final curved = CurvedAnimation(
                                   parent: animation,
-                                  curve: Curves.easeOutCubic,
+                                  curve: transitionCurve,
                                 );
 
                                 // More dynamic vertical travel
@@ -547,13 +586,16 @@ class _CoachOverlayContent extends StatelessWidget {
                     ),
                     child: Center(
                       child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 600),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeInCubic,
+                        duration: cardDuration,
+                        switchInCurve: transitionCurve,
+                        switchOutCurve: transitionCurve,
                         transitionBuilder: (child, animation) {
+                          if (!transitionsEnabled) {
+                            return child;
+                          }
                           final curvedAnimation = CurvedAnimation(
                             parent: animation,
-                            curve: Curves.easeOutCubic,
+                            curve: transitionCurve,
                           );
 
                           // Bouncy scale animation with spring effect
