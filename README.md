@@ -26,7 +26,7 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 Add to `pubspec.yaml`:
 ```yaml
 dependencies:
-  save_points_showcaseview: ^1.0.2
+  save_points_showcaseview: ^1.0.3
 ```
 Then install:
 ```bash
