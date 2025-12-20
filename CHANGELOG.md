@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Optional transition animation configuration in `ShowcaseCoachConfig`:
+  - `enableTransitions`: Enable/disable transition animations between steps (defaults based on `reduceMotion`)
+  - `transitionDuration`: Global duration for all transition animations
+  - `transitionCurve`: Global curve for all transition animations
+  - `backdropTransitionDuration`: Custom duration for backdrop hole transitions
+  - `gradientTransitionDuration`: Custom duration for gradient overlay transitions
+  - `highlightTransitionDuration`: Custom duration for highlight position transitions
+  - `cardTransitionDuration`: Custom duration for tooltip card transitions
+- Fine-grained control over transition animations with individual duration settings
+- Automatic transition disabling when `reduceMotion` is enabled
+
+### Improved
+- Better animation control with configurable durations and curves
+- Transitions now respect `reduceMotion` setting automatically
+
 ## [1.0.2] - 2025-12-14
 
 ### Added

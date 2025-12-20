@@ -1,9 +1,8 @@
 part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
 class _PulsingHighlight extends StatefulWidget {
-  const _PulsingHighlight({required this.child});
-
   final Widget child;
+  const _PulsingHighlight({required this.child});
 
   @override
   State<_PulsingHighlight> createState() => _PulsingHighlightState();

@@ -15,7 +15,7 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 - **Design-first**: Glassmorphism, elevated cards, and balanced typography that fit Material 3.
 - **Safe by default**: Duplicate key detection, visibility checks, and user-friendly error dialogs.
 - **Flexible logic**: Per-step and global conditions (`shouldShow` / `showIf`) plus smart scrolling.
-- **Motion-aware**: Reduced-motion mode to turn off blur and heavy effects.
+- **Motion-aware**: Reduced-motion mode to turn off blur and heavy effects, plus customizable transition animations.
 - **Accessible**: Built-in accessibility support with semantic labels and proper tap targets.
 - **Well-documented**: Comprehensive API documentation with examples and best practices.
 - **Drop-in**: Simple API that works with any widget that has a `GlobalKey`.
@@ -128,9 +128,43 @@ class _MyWidgetState extends State<MyWidget> {
   - `cardStyle`: `glass` (default) or `normal`
   - `overlayTintOpacity`
   - `reduceMotion`: disables blur/heavy effects
+  - **Transition animations** (new):
+    - `enableTransitions`: enable/disable transition animations (defaults based on `reduceMotion`)
+    - `transitionDuration`: global duration for all transitions
+    - `transitionCurve`: global curve for all transitions
+    - Individual transition durations:
+      - `backdropTransitionDuration`: backdrop hole transitions (default: 450ms)
+      - `gradientTransitionDuration`: gradient overlay transitions (default: 500ms)
+      - `highlightTransitionDuration`: highlight position transitions (default: 700ms)
+      - `cardTransitionDuration`: tooltip card transitions (default: 600ms)
 - Per-step logic:
   - `shouldShow`: function returning bool (priority)
   - `showIf`: simple bool (defaults to true)
+
+### Customizing transition animations
+
+```dart
+ShowcaseCoachConfig(
+  // Enable/disable transitions (defaults to true unless reduceMotion is true)
+  enableTransitions: true,
+  
+  // Set global duration for all transitions
+  transitionDuration: Duration(milliseconds: 300),
+  
+  // Set global curve for all transitions
+  transitionCurve: Curves.easeInOut,
+  
+  // Or customize individual transitions
+  backdropTransitionDuration: Duration(milliseconds: 400),
+  cardTransitionDuration: Duration(milliseconds: 500),
+  
+  // Disable transitions entirely
+  // enableTransitions: false,
+  
+  // Or let reduceMotion handle it automatically
+  // reduceMotion: true,  // This will disable transitions
+)
+```
 
 ## Validation and safety
 - Duplicate GlobalKey detection before showing.
@@ -153,7 +187,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
 ```
 2) **Unique keys**: every step needs its own `GlobalKey`.
 3) **Concise copy**: short titles and descriptions improve completion.
-4) **Respect motion**: use `reduceMotion: true` where needed.
+4) **Respect motion**: use `reduceMotion: true` where needed, or customize transition animations with `enableTransitions` and duration/curve options.
 5) **Accessibility**: The library includes built-in accessibility support, but ensure your target widgets are also accessible.
 
 ## Troubleshooting
