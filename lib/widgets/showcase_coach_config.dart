@@ -43,6 +43,11 @@ class ShowcaseCoachConfig {
     this.enableHapticFeedback = false,
     this.hapticFeedbackType = HapticFeedbackType.medium,
     this.enableAutoAdvance = false,
+    this.enableRippleEffect = false,
+    this.glowIntensity = 1.0,
+    this.shadowIntensity = 1.0,
+    this.borderStyle = HighlightBorderStyle.solid,
+    this.enableShimmerEffect = false,
   });
 
   /// Global font family applied to all coach text.
@@ -211,6 +216,67 @@ class ShowcaseCoachConfig {
   /// ```
   final bool enableAutoAdvance;
 
+  /// Whether to enable ripple effect on the highlight.
+  ///
+  /// When enabled, expanding circular ripples emanate from the highlighted
+  /// widget, creating a more dynamic visual effect.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// enableRippleEffect: true  // Enable ripple animations
+  /// ```
+  final bool enableRippleEffect;
+
+  /// Intensity multiplier for the glow effect around the highlight.
+  ///
+  /// Values between 0.0 and 2.0. Higher values create a more intense glow.
+  /// Set to 0.0 to disable glow entirely.
+  ///
+  /// Defaults to `1.0`.
+  ///
+  /// ```dart
+  /// glowIntensity: 1.5  // 50% more intense glow
+  /// ```
+  final double glowIntensity;
+
+  /// Intensity multiplier for shadow effects.
+  ///
+  /// Values between 0.0 and 2.0. Higher values create deeper, more pronounced
+  /// shadows. Set to 0.0 to disable shadows entirely.
+  ///
+  /// Defaults to `1.0`.
+  ///
+  /// ```dart
+  /// shadowIntensity: 0.5  // Softer shadows
+  /// ```
+  final double shadowIntensity;
+
+  /// Border style for the highlight.
+  ///
+  /// - [HighlightBorderStyle.solid]: Solid border (default)
+  /// - [HighlightBorderStyle.dashed]: Dashed border
+  /// - [HighlightBorderStyle.dotted]: Dotted border
+  ///
+  /// Defaults to [HighlightBorderStyle.solid].
+  ///
+  /// ```dart
+  /// borderStyle: HighlightBorderStyle.dashed  // Dashed border
+  /// ```
+  final HighlightBorderStyle borderStyle;
+
+  /// Whether to enable shimmer/sparkle effect on the highlight.
+  ///
+  /// When enabled, a subtle shimmer animation runs across the highlight border,
+  /// creating a premium, polished look.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// enableShimmerEffect: true  // Enable shimmer animation
+  /// ```
+  final bool enableShimmerEffect;
+
   /// Merges a base [TextStyle] with an optional override.
   ///
   /// This is an internal method used to apply configuration overrides to
@@ -258,4 +324,16 @@ enum HapticFeedbackType {
 
   /// Heavy haptic feedback - strong and noticeable.
   heavy,
+}
+
+/// Border style options for the highlight.
+enum HighlightBorderStyle {
+  /// Solid border - continuous line.
+  solid,
+
+  /// Dashed border - broken line segments.
+  dashed,
+
+  /// Dotted border - small dots.
+  dotted,
 }

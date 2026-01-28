@@ -2,17 +2,23 @@ part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
 class _PulsingHighlight extends StatefulWidget {
   final Widget child;
-  const _PulsingHighlight({required this.child});
+  final ShowcaseCoachConfig? config;
+  final Color primary;
+  const _PulsingHighlight({
+    required this.child,
+    this.config,
+    required this.primary,
+  });
 
   @override
   State<_PulsingHighlight> createState() => _PulsingHighlightState();
 }
 
 class _PulsingHighlightState extends State<_PulsingHighlight>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
+  AnimationController? _shimmerController;
   late final CurvedAnimation _curvedAnimation;
-  late final ColorScheme _colorScheme;
 
   @override
   void initState() {
@@ -28,19 +34,46 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
     );
     // Start animation immediately and keep it repeating
     _controller.repeat(reverse: true);
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Cache colorScheme to avoid Theme lookups
-    _colorScheme = Theme.of(context).colorScheme;
+    // Shimmer controller if shimmer is enabled
+    if (widget.config?.enableShimmerEffect == true) {
+      _shimmerController = AnimationController(
+        duration: const Duration(milliseconds: 2000),
+        vsync: this,
+      );
+      _shimmerController!.repeat();
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _shimmerController?.dispose();
     super.dispose();
+  }
+
+  Border _buildBorder(double opacity) {
+    final borderStyle = widget.config?.borderStyle ?? HighlightBorderStyle.solid;
+    final borderColor = Colors.white.withValues(alpha: opacity);
+    const borderWidth = 3.0;
+
+    switch (borderStyle) {
+      case HighlightBorderStyle.dashed:
+        return Border.all(
+          color: borderColor,
+          width: borderWidth,
+        );
+      case HighlightBorderStyle.dotted:
+        return Border.all(
+          color: borderColor,
+          width: borderWidth,
+        );
+      case HighlightBorderStyle.solid:
+        return Border.all(
+          color: borderColor,
+          width: borderWidth,
+        );
+    }
   }
 
   @override
@@ -59,12 +92,16 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
 
           // Border opacity pulses between 0.75 and 1.0 (smoother range)
           final borderOpacity = 0.75 + (0.25 * curved);
+          // Apply glow intensity multiplier
+          final glowMultiplier = widget.config?.glowIntensity ?? 1.0;
+          final shadowMultiplier = widget.config?.shadowIntensity ?? 1.0;
+          
           // Shadow intensity pulses between 0.18 and 0.42 (enhanced range)
-          final shadowIntensity = 0.18 + (0.24 * curved);
+          final baseShadowIntensity = (0.18 + (0.24 * curved)) * glowMultiplier;
           // Blur radius pulses between 20 and 36 (smoother range)
-          final blurRadius = 20 + (16 * curved);
+          final blurRadius = (20 + (16 * curved)) * glowMultiplier;
           // Spread radius pulses between 3.0 and 6.0 (smoother range)
-          final spreadRadius = 3.0 + (3.0 * curved);
+          final spreadRadius = (3.0 + (3.0 * curved)) * glowMultiplier;
           // Bounce scale between 0.96 and 1.04 (subtler bounce)
           final bounceScale = 0.96 + (0.08 * curved);
           // Slight float to give a gentle rise/fall (smoother)
@@ -74,29 +111,53 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
             offset: Offset(0, floatOffset),
             child: Transform.scale(
               scale: bounceScale,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: borderOpacity),
-                    width: 3,
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      border: _buildBorder(borderOpacity),
+                      boxShadow: [
+                        if (glowMultiplier > 0)
+                          BoxShadow(
+                            color: widget.primary
+                                .withValues(alpha: baseShadowIntensity * haloWave),
+                            blurRadius: blurRadius,
+                            spreadRadius: spreadRadius,
+                          ),
+                        if (shadowMultiplier > 0)
+                          BoxShadow(
+                            color: Colors.white.withValues(
+                              alpha: (0.4 * borderOpacity) * shadowMultiplier,
+                            ),
+                            blurRadius: (12 + (5 * curved)) * shadowMultiplier,
+                            spreadRadius: 1 * shadowMultiplier,
+                          ),
+                      ],
+                    ),
+                    child: widget.child,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _colorScheme.primary
-                          .withValues(alpha: shadowIntensity * haloWave),
-                      blurRadius: blurRadius,
-                      spreadRadius: spreadRadius,
+                  // Shimmer overlay
+                  if (widget.config?.enableShimmerEffect == true && _shimmerController != null)
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: IgnorePointer(
+                          child: AnimatedBuilder(
+                            animation: _shimmerController!,
+                            builder: (context, child) {
+                              return CustomPaint(
+                                painter: _ShimmerPainter(
+                                  progress: _shimmerController!.value,
+                                  color: widget.primary,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     ),
-                    BoxShadow(
-                      color:
-                          Colors.white.withValues(alpha: 0.4 * borderOpacity),
-                      blurRadius: 12 + (5 * curved),
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: widget.child,
+                ],
               ),
             ),
           );
@@ -111,9 +172,11 @@ class _HighlightAnimation extends StatefulWidget {
   const _HighlightAnimation({
     super.key,
     required this.primary,
+    this.config,
   });
 
   final Color primary;
+  final ShowcaseCoachConfig? config;
 
   @override
   State<_HighlightAnimation> createState() => _HighlightAnimationState();
@@ -178,6 +241,8 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
         );
       },
       child: _PulsingHighlight(
+        config: widget.config,
+        primary: widget.primary,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: widget.primary.withValues(alpha: 0.05),
@@ -413,19 +478,32 @@ class _CoachOverlayContent extends StatelessWidget {
 
         /// Highlight
         if (rect != null)
-          AnimatedPositioned(
-            duration: highlightDuration,
-            curve: transitionCurve,
-            left: rect!.left,
-            top: rect!.top,
-            width: rect!.width,
-            height: rect!.height,
-            child: IgnorePointer(
-              child: _HighlightAnimation(
-                key: ValueKey('highlight_${rect!.hashCode}'),
-                primary: primary,
+          Stack(
+            children: [
+              // Ripple effect
+              if (config?.enableRippleEffect == true)
+                _RippleEffect(
+                  rect: rect!,
+                  primary: primary,
+                  duration: highlightDuration,
+                ),
+              // Highlight animation
+              AnimatedPositioned(
+                duration: highlightDuration,
+                curve: transitionCurve,
+                left: rect!.left,
+                top: rect!.top,
+                width: rect!.width,
+                height: rect!.height,
+                child: IgnorePointer(
+                  child: _HighlightAnimation(
+                    key: ValueKey('highlight_${rect!.hashCode}'),
+                    primary: primary,
+                    config: config,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
 
         /// Card positioned above widget
@@ -672,5 +750,174 @@ class _CoachOverlayContent extends StatelessWidget {
     }
 
     return content;
+  }
+}
+
+/// Shimmer painter for the highlight border effect.
+class _ShimmerPainter extends CustomPainter {
+  _ShimmerPainter({
+    required this.progress,
+    required this.color,
+  });
+
+  final double progress;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment(-1.0 + progress * 2, 0),
+        end: Alignment(1.0 + progress * 2, 0),
+        colors: [
+          Colors.transparent,
+          color.withValues(alpha: 0.6),
+          color.withValues(alpha: 0.8),
+          color.withValues(alpha: 0.6),
+          Colors.transparent,
+        ],
+        stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          const Radius.circular(24),
+        ),
+      );
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_ShimmerPainter oldDelegate) {
+    return oldDelegate.progress != progress || oldDelegate.color != color;
+  }
+}
+
+/// Ripple effect widget that creates expanding circles from the highlight.
+class _RippleEffect extends StatefulWidget {
+  const _RippleEffect({
+    required this.rect,
+    required this.primary,
+    required this.duration,
+  });
+
+  final Rect rect;
+  final Color primary;
+  final Duration duration;
+
+  @override
+  State<_RippleEffect> createState() => _RippleEffectState();
+}
+
+class _RippleEffectState extends State<_RippleEffect>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  final List<_Ripple> _ripples = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat();
+
+    // Create ripples periodically
+    _controller.addListener(() {
+      if (_controller.value % 0.5 < 0.01) {
+        setState(() {
+          _ripples.add(_Ripple(
+            startTime: DateTime.now(),
+            center: Offset(
+              widget.rect.center.dx,
+              widget.rect.center.dy,
+            ),
+          ),);
+        });
+      }
+
+      // Remove old ripples
+      final now = DateTime.now();
+      _ripples.removeWhere(
+        (ripple) => now.difference(ripple.startTime).inMilliseconds > 2000,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: widget.rect.left - 50,
+      top: widget.rect.top - 50,
+      width: widget.rect.width + 100,
+      height: widget.rect.height + 100,
+      child: IgnorePointer(
+        child: CustomPaint(
+          painter: _RipplePainter(
+            ripples: _ripples,
+            color: widget.primary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Ripple {
+  _Ripple({
+    required this.startTime,
+    required this.center,
+  });
+
+  final DateTime startTime;
+  final Offset center;
+}
+
+class _RipplePainter extends CustomPainter {
+  _RipplePainter({
+    required this.ripples,
+    required this.color,
+  });
+
+  final List<_Ripple> ripples;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final now = DateTime.now();
+
+    for (final ripple in ripples) {
+      final elapsed = now.difference(ripple.startTime).inMilliseconds;
+      final progress = (elapsed / 2000.0).clamp(0.0, 1.0);
+      final radius = progress * 100;
+      final opacity = (1.0 - progress).clamp(0.0, 1.0);
+
+      final paint = Paint()
+        ..color = color.withValues(alpha: opacity * 0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+
+      canvas.drawCircle(
+        ripple.center,
+        radius,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RipplePainter oldDelegate) {
+    return oldDelegate.ripples.length != ripples.length;
   }
 }
