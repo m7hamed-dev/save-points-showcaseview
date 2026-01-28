@@ -123,6 +123,9 @@ class _TooltipCard extends StatelessWidget {
                     showProgressIndicator:
                         config?.showProgressIndicator ?? true,
                     step: step,
+                    leading: step?.leading,
+                    imageUrl: step?.imageUrl,
+                    imageAsset: step?.imageAsset,
                   ),
                 )
               : _CardSurface(

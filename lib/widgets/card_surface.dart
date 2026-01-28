@@ -15,8 +15,11 @@ class _CardSurface extends StatefulWidget {
     required this.buttonStyle,
     this.currentStep,
     this.totalSteps,
-                    this.showProgressIndicator = true,
+    this.showProgressIndicator = true,
     this.step,
+    this.leading,
+    this.imageUrl,
+    this.imageAsset,
   });
 
   final Color primary;
@@ -34,6 +37,9 @@ class _CardSurface extends StatefulWidget {
   final int? totalSteps;
   final bool showProgressIndicator;
   final CoachStep? step;
+  final Widget? leading;
+  final String? imageUrl;
+  final String? imageAsset;
 
   @override
   State<_CardSurface> createState() => _CardSurfaceState();
@@ -146,6 +152,58 @@ class _CardSurfaceState extends State<_CardSurface>
                       ],
                     ),
                   ),
+                // Leading widget (icon or image)
+                if (widget.leading != null) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: widget.leading!,
+                  ),
+                ],
+                // Image from URL or asset
+                if (widget.imageUrl != null || widget.imageAsset != null) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxHeight: 200,
+                        ),
+                        child: widget.imageUrl != null
+                            ? Image.network(
+                                widget.imageUrl!,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 200,
+                                    color: widget.colorScheme.surfaceContainerHighest,
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: widget.colorScheme.onSurface.withValues(alpha: 0.3),
+                                      size: 48,
+                                    ),
+                                  );
+                                },
+                              )
+                            : Image.asset(
+                                widget.imageAsset!,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 200,
+                                    color: widget.colorScheme.surfaceContainerHighest,
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: widget.colorScheme.onSurface.withValues(alpha: 0.3),
+                                      size: 48,
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
                 Text(
                   widget.title,
                   style: widget.titleStyle.copyWith(

@@ -40,6 +40,9 @@ class ShowcaseCoachConfig {
     this.gradientTransitionDuration,
     this.highlightTransitionDuration,
     this.cardTransitionDuration,
+    this.enableHapticFeedback = false,
+    this.hapticFeedbackType = HapticFeedbackType.medium,
+    this.enableAutoAdvance = false,
   });
 
   /// Global font family applied to all coach text.
@@ -172,6 +175,42 @@ class ShowcaseCoachConfig {
   /// If not provided, uses [transitionDuration] or defaults to 600ms.
   final Duration? cardTransitionDuration;
 
+  /// Whether to enable haptic feedback on step changes.
+  ///
+  /// When enabled, provides tactile feedback when transitioning between steps
+  /// and when completing the tour. This improves mobile UX and accessibility.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// enableHapticFeedback: true  // Enable haptic feedback
+  /// ```
+  final bool enableHapticFeedback;
+
+  /// Type of haptic feedback to use.
+  ///
+  /// - [HapticFeedbackType.light]: Light impact (for subtle feedback)
+  /// - [HapticFeedbackType.medium]: Medium impact (default, balanced)
+  /// - [HapticFeedbackType.heavy]: Heavy impact (for important transitions)
+  ///
+  /// Only used when [enableHapticFeedback] is `true`.
+  ///
+  /// Defaults to [HapticFeedbackType.medium].
+  final HapticFeedbackType hapticFeedbackType;
+
+  /// Whether to enable auto-advance functionality.
+  ///
+  /// When enabled globally, steps can auto-advance if they have an
+  /// [autoAdvanceAfter] duration set. This is useful for demo modes
+  /// or kiosk displays.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// enableAutoAdvance: true  // Allow steps to auto-advance
+  /// ```
+  final bool enableAutoAdvance;
+
   /// Merges a base [TextStyle] with an optional override.
   ///
   /// This is an internal method used to apply configuration overrides to
@@ -208,3 +247,15 @@ enum ShowcaseCoachCardStyle {
 
 /// Default overlay tint opacity constant.
 const double _defaultOverlayTintOpacity = 0.15;
+
+/// Type of haptic feedback to provide.
+enum HapticFeedbackType {
+  /// Light haptic feedback - subtle and gentle.
+  light,
+
+  /// Medium haptic feedback - balanced and standard.
+  medium,
+
+  /// Heavy haptic feedback - strong and noticeable.
+  heavy,
+}

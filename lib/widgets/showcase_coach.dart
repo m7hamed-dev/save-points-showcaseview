@@ -206,60 +206,171 @@ class ShowcaseCoach {
     // Ensure first step is visible before showing overlay
     await ensureVisible(visibleSteps[0].targetKey);
 
+    // Helper function to trigger haptic feedback
+    void triggerHapticFeedback() {
+      if (config?.enableHapticFeedback == true) {
+        switch (config!.hapticFeedbackType) {
+          case HapticFeedbackType.light:
+            HapticFeedback.lightImpact();
+            break;
+          case HapticFeedbackType.medium:
+            HapticFeedback.mediumImpact();
+            break;
+          case HapticFeedbackType.heavy:
+            HapticFeedback.heavyImpact();
+            break;
+        }
+      }
+    }
+
     // Call onStepStart for the first step
     onStepStart?.call(0, visibleSteps[0]);
     onStepChanged?.call(1, visibleSteps.length);
+    triggerHapticFeedback();
 
     entry = OverlayEntry(
       builder: (context) {
-        return ValueListenableBuilder<int>(
-          valueListenable: controller,
-          builder: (context, index, _) {
-            final step = visibleSteps[index];
-
-            // Call onStepChanged whenever step changes
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              onStepChanged?.call(index + 1, visibleSteps.length);
-              // Call onStepStart for new step (after first)
-              if (index > 0) {
-                onStepStart?.call(index, step);
-              }
-            });
-
-            // Ensure current step is visible when it changes
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              ensureVisible(step.targetKey);
-            });
-
-            final rect = targetRect(step.targetKey);
-            return _CoachOverlay(
-              step: step,
-              rect: rect,
-              isLast: index == visibleSteps.length - 1,
-              currentStep: index + 1,
-              totalSteps: visibleSteps.length,
-              onNext: () {
-                // Call onStepComplete before moving to next
-                onStepComplete?.call(index, step);
-                
-                if (index == visibleSteps.length - 1) {
-                  onDone?.call();
-                  close();
-                } else {
-                  controller.value = index + 1;
-                }
-              },
-              onSkip: () {
-                onSkip?.call();
-                close();
-              },
-              config: config,
-            );
-          },
+        return _ShowcaseCoachOverlayContent(
+          controller: controller,
+          visibleSteps: visibleSteps,
+          config: config,
+          onStepChanged: onStepChanged,
+          onStepStart: onStepStart,
+          onStepComplete: onStepComplete,
+          onDone: onDone,
+          onSkip: onSkip,
+          close: close,
+          ensureVisible: ensureVisible,
+          targetRect: targetRect,
+          triggerHapticFeedback: triggerHapticFeedback,
         );
       },
     );
 
     overlay.insert(entry);
+  }
+}
+
+/// Internal widget that manages the overlay content with auto-advance and haptic feedback.
+class _ShowcaseCoachOverlayContent extends StatefulWidget {
+  const _ShowcaseCoachOverlayContent({
+    required this.controller,
+    required this.visibleSteps,
+    required this.config,
+    required this.onStepChanged,
+    required this.onStepStart,
+    required this.onStepComplete,
+    required this.onDone,
+    required this.onSkip,
+    required this.close,
+    required this.ensureVisible,
+    required this.targetRect,
+    required this.triggerHapticFeedback,
+  });
+
+  final ValueNotifier<int> controller;
+  final List<CoachStep> visibleSteps;
+  final ShowcaseCoachConfig? config;
+  final void Function(int currentStep, int totalSteps)? onStepChanged;
+  final void Function(int stepIndex, CoachStep step)? onStepStart;
+  final void Function(int stepIndex, CoachStep step)? onStepComplete;
+  final VoidCallback? onDone;
+  final VoidCallback? onSkip;
+  final VoidCallback close;
+  final Future<void> Function(GlobalKey key) ensureVisible;
+  final Rect? Function(GlobalKey key) targetRect;
+  final VoidCallback triggerHapticFeedback;
+
+  @override
+  State<_ShowcaseCoachOverlayContent> createState() =>
+      _ShowcaseCoachOverlayContentState();
+}
+
+class _ShowcaseCoachOverlayContentState
+    extends State<_ShowcaseCoachOverlayContent> {
+  Timer? _autoAdvanceTimer;
+
+  @override
+  void dispose() {
+    _autoAdvanceTimer?.cancel();
+    super.dispose();
+  }
+
+  void _handleNext(int index) {
+    // Cancel any existing auto-advance timer
+    _autoAdvanceTimer?.cancel();
+    _autoAdvanceTimer = null;
+
+    // Call onStepComplete before moving to next
+    widget.onStepComplete?.call(index, widget.visibleSteps[index]);
+
+    if (index == widget.visibleSteps.length - 1) {
+      widget.triggerHapticFeedback();
+      widget.onDone?.call();
+      widget.close();
+    } else {
+      widget.triggerHapticFeedback();
+      widget.controller.value = index + 1;
+    }
+  }
+
+  void _setupAutoAdvance(int index) {
+    // Cancel any existing timer
+    _autoAdvanceTimer?.cancel();
+
+    final step = widget.visibleSteps[index];
+    final autoAdvanceEnabled = widget.config?.enableAutoAdvance ?? false;
+    final autoAdvanceDuration = step.autoAdvanceAfter;
+
+    if (autoAdvanceEnabled && autoAdvanceDuration != null) {
+      _autoAdvanceTimer = Timer(autoAdvanceDuration, () {
+        if (mounted) {
+          _handleNext(index);
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: widget.controller,
+      builder: (context, index, _) {
+        final step = widget.visibleSteps[index];
+
+        // Call onStepChanged whenever step changes
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.onStepChanged?.call(index + 1, widget.visibleSteps.length);
+          // Call onStepStart for new step (after first)
+          if (index > 0) {
+            widget.onStepStart?.call(index, step);
+            widget.triggerHapticFeedback();
+          }
+          // Setup auto-advance for this step
+          _setupAutoAdvance(index);
+        });
+
+        // Ensure current step is visible when it changes
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.ensureVisible(step.targetKey);
+        });
+
+        final rect = widget.targetRect(step.targetKey);
+        return _CoachOverlay(
+          step: step,
+          rect: rect,
+          isLast: index == widget.visibleSteps.length - 1,
+          currentStep: index + 1,
+          totalSteps: widget.visibleSteps.length,
+          onNext: () => _handleNext(index),
+          onSkip: () {
+            _autoAdvanceTimer?.cancel();
+            widget.onSkip?.call();
+            widget.close();
+          },
+          config: widget.config,
+        );
+      },
+    );
   }
 }

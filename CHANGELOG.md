@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-01-28
+
+### Added
+- **Haptic Feedback Support**: Added optional haptic feedback for step changes
+  - `enableHapticFeedback` boolean in `ShowcaseCoachConfig` (default: `false`)
+  - `hapticFeedbackType` enum with options: `light`, `medium`, `heavy` (default: `medium`)
+  - Provides tactile feedback when transitioning between steps and completing tours
+- **Auto-Advance Feature**: Added auto-advance functionality for demo modes and kiosk displays
+  - `enableAutoAdvance` boolean in `ShowcaseCoachConfig` (default: `false`)
+  - `autoAdvanceAfter` duration in `CoachStep` for per-step auto-advance timing
+  - Steps can automatically proceed after a specified duration
+- **Image/Icon Support**: Added support for visual content in tooltip cards
+  - `leading` widget property in `CoachStep` for custom icons or widgets
+  - `imageUrl` property for network images
+  - `imageAsset` property for local asset images
+  - Images are displayed above the description with proper error handling
+- **Enhanced Error Messages**: Improved validation error messages with actionable solutions
+  - More descriptive error messages for duplicate keys
+  - Detailed troubleshooting steps for missing/invisible widgets
+  - Common causes and solutions provided for each error type
+  - Error dialogs now support text selection for easier debugging
+
+### Improved
+- Better error handling with actionable suggestions and code examples
+- Error dialogs now use scrollable content for long error messages
+- More user-friendly error messages that help developers fix issues quickly
+
 ## [1.0.3] - 2025-01-XX
 
 ### Added

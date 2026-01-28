@@ -31,7 +31,12 @@ class ShowcaseCoachError {
           'Showcase Coach Error',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: Text(message),
+        content: SingleChildScrollView(
+          child: SelectableText(
+            message,
+            style: const TextStyle(fontSize: 14, height: 1.5),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

@@ -37,7 +37,7 @@ class ShowcaseCoachValidator {
     if (duplicates.isNotEmpty) {
       final buffer = StringBuffer(
         'Duplicate GlobalKeys detected.\n\n'
-        'Each step must use a unique GlobalKey.\n\n',
+        'Each step must use a unique GlobalKey. The following steps share the same key:\n\n',
       );
 
       for (final duplicate in duplicates) {
@@ -46,6 +46,12 @@ class ShowcaseCoachValidator {
             indices.map((i) => 'Step ${i + 1}: "${steps[i].title}"').join(', ');
         buffer.writeln('• $stepTitles');
       }
+
+      buffer.writeln('\n💡 Solution:');
+      buffer.writeln('Create separate GlobalKey instances for each step:');
+      buffer.writeln('  final key1 = GlobalKey();');
+      buffer.writeln('  final key2 = GlobalKey();');
+      buffer.writeln('  // Use key1 for step 1, key2 for step 2, etc.');
 
       return buffer.toString();
     }
@@ -110,16 +116,30 @@ class ShowcaseCoachValidator {
       // Last attempt failed, return error message
       final buffer = StringBuffer(
         'Some target widgets are not visible or not found.\n\n'
-        'Make sure all widgets with GlobalKeys are:\n'
-        '• Built and visible in the widget tree\n'
-        '• Not hidden or off-screen\n'
-        '• Have a valid size\n\n'
-        'Missing or invisible keys:\n',
+        'The following steps reference widgets that are not currently visible:\n\n',
       );
 
       for (final index in missingKeys) {
         buffer.writeln('• Step ${index + 1}: "${steps[index].title}"');
       }
+
+      buffer.writeln('\n💡 Common causes and solutions:');
+      buffer.writeln('1. Widget not built yet:');
+      buffer.writeln('   → Call ShowcaseCoach.show() after the widget tree is built');
+      buffer.writeln('   → Use WidgetsBinding.instance.addPostFrameCallback()');
+      buffer.write('\n');
+      buffer.writeln('2. Widget is hidden or off-screen:');
+      buffer.writeln('   → Check if widget is inside a conditional (if/else)');
+      buffer.writeln('   → Ensure widget is not wrapped in Visibility(visible: false)');
+      buffer.writeln('   → Verify widget is not scrolled out of view');
+      buffer.write('\n');
+      buffer.writeln('3. GlobalKey not attached:');
+      buffer.writeln('   → Ensure GlobalKey is passed to the widget\'s key parameter');
+      buffer.writeln('   → Verify the widget exists in the current route/screen');
+      buffer.write('\n');
+      buffer.writeln('4. Widget has zero size:');
+      buffer.writeln('   → Check if widget is inside a SizedBox with zero size');
+      buffer.writeln('   → Ensure widget is not collapsed by constraints');
 
       return buffer.toString();
     }

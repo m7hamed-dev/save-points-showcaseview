@@ -41,6 +41,10 @@ class CoachStep {
     this.nextButtonText,
     this.skipButtonText,
     this.showSkipButton = true,
+    this.autoAdvanceAfter,
+    this.leading,
+    this.imageUrl,
+    this.imageAsset,
   });
 
   /// The [GlobalKey] attached to the widget to highlight.
@@ -131,6 +135,49 @@ class CoachStep {
   /// showSkipButton: false  // Hide skip for critical steps
   /// ```
   final bool showSkipButton;
+
+  /// Optional duration after which this step will auto-advance.
+  ///
+  /// If provided and auto-advance is enabled in the config, the step will
+  /// automatically proceed to the next step after this duration. This is
+  /// useful for demo modes, kiosk displays, or quick tours.
+  ///
+  /// ```dart
+  /// autoAdvanceAfter: Duration(seconds: 5)  // Auto-advance after 5 seconds
+  /// ```
+  final Duration? autoAdvanceAfter;
+
+  /// Optional leading widget (icon or image) to display in the tooltip card.
+  ///
+  /// This can be used to add visual context to the step, such as an icon
+  /// representing the feature being explained or an image showing what
+  /// the user should look for.
+  ///
+  /// ```dart
+  /// leading: Icon(Icons.settings, size: 48, color: Colors.blue)
+  /// ```
+  final Widget? leading;
+
+  /// Optional network image URL to display in the tooltip card.
+  ///
+  /// If provided, an image will be loaded from this URL and displayed
+  /// above the description. This is useful for showing screenshots or
+  /// visual guides.
+  ///
+  /// ```dart
+  /// imageUrl: 'https://example.com/screenshot.png'
+  /// ```
+  final String? imageUrl;
+
+  /// Optional asset image path to display in the tooltip card.
+  ///
+  /// If provided, an image will be loaded from the app's assets and
+  /// displayed above the description.
+  ///
+  /// ```dart
+  /// imageAsset: 'assets/images/guide.png'
+  /// ```
+  final String? imageAsset;
 
   /// Checks if this step should be displayed based on its conditions.
   ///

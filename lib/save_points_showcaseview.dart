@@ -23,6 +23,7 @@
 /// complete documentation and examples.
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
