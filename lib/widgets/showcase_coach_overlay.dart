@@ -225,51 +225,120 @@ class _HighlightAnimation extends StatefulWidget {
 }
 
 class _HighlightAnimationState extends State<_HighlightAnimation>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
+  AnimationController? _rotationController;
   late final Animation<double> _scaleAnimation;
   late final Animation<double> _opacityAnimation;
+  Animation<double>? _rotationAnimation;
 
   @override
   void initState() {
     super.initState();
+    
+    // Get animation durations from config
+    final scaleDuration = widget.config?.scaleAnimationDuration ??
+        widget.config?.transitionDuration ??
+        const Duration(milliseconds: 800);
+    final fadeDuration = widget.config?.fadeAnimationDuration ??
+        widget.config?.transitionDuration ??
+        const Duration(milliseconds: 400);
+    
+    // Get animation curves from config
+    final scaleCurve = widget.config?.scaleAnimationCurve ??
+        widget.config?.transitionCurve ??
+        Curves.easeOutBack;
+    final fadeCurve = widget.config?.fadeAnimationCurve ??
+        widget.config?.transitionCurve ??
+        Curves.easeOut;
+    
+    // Get scale range from config
+    final scaleRange = widget.config?.scaleAnimationRange ??
+        const ScaleRange(0.8, 1.0);
+    
+    // Apply animation delay
+    final delay = widget.config?.animationDelay ?? Duration.zero;
+    
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: scaleDuration,
       vsync: this,
     );
 
-    // Spring-like scale animation with bounce
+    // Scale animation with configurable range and curve
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.75, end: 1.08)
-            .chain(CurveTween(curve: Curves.easeOutBack)),
+        tween: Tween(begin: scaleRange.begin, end: scaleRange.end)
+            .chain(CurveTween(curve: scaleCurve)),
         weight: 75,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.08, end: 1.0)
+        tween: Tween(begin: scaleRange.end, end: 1.0)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
     ]).animate(_controller);
 
-    // Smooth fade in with faster start - use Interval to prevent overshoot
+    // Fade animation with configurable curve
+    // Calculate interval end, ensuring it doesn't exceed 1.0
+    final fadeIntervalEnd = scaleDuration.inMilliseconds > 0
+        ? (fadeDuration.inMilliseconds / scaleDuration.inMilliseconds).clamp(0.0, 1.0)
+        : 1.0;
     _opacityAnimation = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 1.0, curve: Curves.easeOutQuart),
+      curve: Interval(0.0, fadeIntervalEnd, curve: fadeCurve),
     );
 
-    _controller.forward();
+    // Rotation animation if enabled
+    if (widget.config?.enableRotationAnimation == true) {
+      final rotationSpeed = widget.config?.rotationAnimationSpeed ?? 1.0;
+      final rotationAngle = widget.config?.rotationAngle ?? 0.0;
+      
+      _rotationController = AnimationController(
+        duration: Duration(milliseconds: (2000 / rotationSpeed).round()),
+        vsync: this,
+      );
+      
+      _rotationAnimation = Tween<double>(
+        begin: -rotationAngle,
+        end: rotationAngle,
+      ).animate(
+        CurvedAnimation(
+          parent: _rotationController!,
+          curve: Curves.easeInOut,
+        ),
+      );
+      
+      if (widget.config?.animationDirection == AnimationDirection.reverse) {
+        _rotationController!.repeat(reverse: true);
+      } else if (widget.config?.animationDirection == AnimationDirection.alternate) {
+        _rotationController!.repeat(reverse: true);
+      } else {
+        _rotationController!.repeat();
+      }
+    }
+
+    // Start animations with delay
+    if (delay > Duration.zero) {
+      Future.delayed(delay, () {
+        if (mounted) {
+          _controller.forward();
+        }
+      });
+    } else {
+      _controller.forward();
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _rotationController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
+    Widget child = AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
         // Clamp opacity to [0, 1] to prevent errors
@@ -295,6 +364,22 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
         ),
       ),
     );
+
+    // Add rotation if enabled
+    if (widget.config?.enableRotationAnimation == true && _rotationAnimation != null) {
+      child = AnimatedBuilder(
+        animation: _rotationAnimation!,
+        builder: (context, child) {
+          return Transform.rotate(
+            angle: _rotationAnimation!.value * (math.pi / 180),
+            child: child,
+          );
+        },
+        child: child,
+      );
+    }
+
+    return child;
   }
 }
 
@@ -630,40 +715,53 @@ class _CoachOverlayContent extends StatelessWidget {
                                   curve: transitionCurve,
                                 );
 
-                                // More dynamic vertical travel
+                                // Slide animation with configurable options
+                                final slideOffset = config?.slideAnimationOffset ??
+                                    Offset(0.0, placeAbove ? -0.2 : 0.2);
+                                final slideCurve = config?.slideAnimationCurve ??
+                                    config?.transitionCurve ??
+                                    Curves.easeOutBack;
                                 final slide = Tween<Offset>(
-                                  begin: Offset(0.0, placeAbove ? -0.2 : 0.2),
+                                  begin: slideOffset,
                                   end: Offset.zero,
                                 ).animate(
                                   CurvedAnimation(
                                     parent: animation,
-                                    curve: Curves.easeOutBack,
+                                    curve: slideCurve,
                                   ),
                                 );
 
-                                // Bouncy pop-in with spring-like effect
+                                // Scale animation with configurable options
+                                final scaleRange = config?.scaleAnimationRange ??
+                                    const ScaleRange(0.8, 1.0);
+                                final scaleCurve = config?.scaleAnimationCurve ??
+                                    config?.transitionCurve ??
+                                    Curves.easeOutBack;
                                 final scale = TweenSequence<double>([
                                   TweenSequenceItem(
-                                    tween: Tween(begin: 0.8, end: 1.1).chain(
-                                      CurveTween(curve: Curves.easeOutBack),
+                                    tween: Tween(begin: scaleRange.begin, end: scaleRange.end).chain(
+                                      CurveTween(curve: scaleCurve),
                                     ),
                                     weight: 70,
                                   ),
                                   TweenSequenceItem(
-                                    tween: Tween(begin: 1.1, end: 1.0).chain(
+                                    tween: Tween(begin: scaleRange.end, end: 1.0).chain(
                                       CurveTween(curve: Curves.easeInOut),
                                     ),
                                     weight: 30,
                                   ),
                                 ]).animate(curved);
 
-                                // Faster fade with smooth curve - clamp to prevent overshoot
+                                // Fade animation with configurable curve
+                                final fadeCurve = config?.fadeAnimationCurve ??
+                                    config?.transitionCurve ??
+                                    Curves.easeOutQuart;
                                 final fade = CurvedAnimation(
                                   parent: animation,
-                                  curve: const Interval(
+                                  curve: Interval(
                                     0.0,
                                     1.0,
-                                    curve: Curves.easeOutQuart,
+                                    curve: fadeCurve,
                                   ),
                                 );
 
@@ -744,37 +842,56 @@ class _CoachOverlayContent extends StatelessWidget {
                             curve: transitionCurve,
                           );
 
-                          // Bouncy scale animation with spring effect
+                          // Scale animation with configurable options
+                          final scaleRange = config?.scaleAnimationRange ??
+                              const ScaleRange(0.8, 1.0);
+                          final scaleCurve = config?.scaleAnimationCurve ??
+                              config?.transitionCurve ??
+                              Curves.easeOutBack;
                           final scale = TweenSequence<double>([
                             TweenSequenceItem(
-                              tween: Tween(begin: 0.8, end: 1.1).chain(
-                                CurveTween(curve: Curves.easeOutBack),
+                              tween: Tween(begin: scaleRange.begin, end: scaleRange.end).chain(
+                                CurveTween(curve: scaleCurve),
                               ),
                               weight: 70,
                             ),
                             TweenSequenceItem(
-                              tween: Tween(begin: 1.1, end: 1.0).chain(
+                              tween: Tween(begin: scaleRange.end, end: 1.0).chain(
                                 CurveTween(curve: Curves.easeInOut),
                               ),
                               weight: 30,
                             ),
                           ]).animate(curvedAnimation);
 
-                          // Faster fade - clamp to prevent overshoot
+                          // Fade animation with configurable curve
+                          final fadeCurve = config?.fadeAnimationCurve ??
+                              config?.transitionCurve ??
+                              Curves.easeOutQuart;
                           final fade = CurvedAnimation(
                             parent: animation,
-                            curve: const Interval(
+                            curve: Interval(
                               0.0,
                               1.0,
-                              curve: Curves.easeOutQuart,
+                              curve: fadeCurve,
                             ),
                           );
 
+                          // Slide animation with configurable options
+                          final slideOffset = config?.slideAnimationOffset ??
+                              const Offset(0.0, 0.15);
+                          final slideCurve = config?.slideAnimationCurve ??
+                              config?.transitionCurve ??
+                              transitionCurve;
                           return SlideTransition(
                             position: Tween<Offset>(
-                              begin: const Offset(0.0, 0.15),
+                              begin: slideOffset,
                               end: Offset.zero,
-                            ).animate(curvedAnimation),
+                            ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: slideCurve,
+                              ),
+                            ),
                             child: FadeTransition(
                               opacity: fade,
                               child: ScaleTransition(

@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-01-28
+
+### Added
+- **Rotation Animation**: Added optional rotation animation for highlights
+  - `enableRotationAnimation` boolean in `ShowcaseCoachConfig` (default: `false`)
+  - `rotationAnimationSpeed` double for controlling rotation speed (default: `1.0`, range: 0.5-3.0)
+  - `rotationAngle` double for maximum rotation angle in degrees (default: `0.0`, range: 0.0-360.0)
+  - Creates dynamic spinning effect for attention-grabbing highlights
+- **Fade Animation Customization**: Added fine-grained control over fade animations
+  - `fadeAnimationDuration` Duration for fade animation timing
+  - `fadeAnimationCurve` Curve for fade animation curves
+  - Customizable fade-in and fade-out effects
+- **Scale Animation Customization**: Added comprehensive scale animation options
+  - `scaleAnimationDuration` Duration for scale animation timing
+  - `scaleAnimationCurve` Curve for scale animation curves
+  - `scaleAnimationRange` ScaleRange class for defining scale begin/end values
+  - Full control over scale-up and scale-down animations
+- **Slide Animation Customization**: Added customizable slide animations
+  - `slideAnimationDuration` Duration for slide animation timing
+  - `slideAnimationCurve` Curve for slide animation curves
+  - `slideAnimationOffset` Offset for custom slide starting positions
+  - Flexible slide directions and distances
+- **Animation Delay Options**: Added delay controls for animations
+  - `animationDelay` Duration for delaying all animations
+  - `staggerAnimationDelay` Duration for staggering multiple animations
+  - `enableStaggerAnimations` boolean for cascading animation effects
+  - Better coordination of complex multi-element animations
+- **Animation Presets**: Added pre-configured animation styles
+  - `AnimationPreset` enum with options: `defaultPreset`, `smooth`, `bouncy`, `quick`, `dramatic`
+  - Quick way to apply common animation styles
+- **Animation Direction**: Added animation direction control
+  - `AnimationDirection` enum with options: `normal`, `reverse`, `alternate`
+  - Control animation playback direction
+- **ScaleRange Class**: Added utility class for scale animation ranges
+  - `ScaleRange(begin, end)` constructor for defining scale ranges
+  - Simplifies scale animation configuration
+
+### Improved
+- Enhanced animation customization with granular control over all animation types
+- Better animation coordination with delay and stagger options
+- More flexible animation system with presets and directions
+- Improved developer experience with comprehensive animation options
+
 ## [1.3.0] - 2025-01-28
 
 ### Added

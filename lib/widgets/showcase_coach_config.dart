@@ -56,6 +56,22 @@ class ShowcaseCoachConfig {
     this.highlightShape = HighlightShape.roundedRectangle,
     this.dismissOnTapOutside = false,
     this.debugMode = false,
+    this.enableRotationAnimation = false,
+    this.rotationAnimationSpeed = 1.0,
+    this.rotationAngle = 0.0,
+    this.fadeAnimationDuration,
+    this.fadeAnimationCurve,
+    this.scaleAnimationDuration,
+    this.scaleAnimationCurve,
+    this.scaleAnimationRange = const ScaleRange(0.8, 1.0),
+    this.slideAnimationDuration,
+    this.slideAnimationCurve,
+    this.slideAnimationOffset,
+    this.animationDelay = Duration.zero,
+    this.staggerAnimationDelay = Duration.zero,
+    this.enableStaggerAnimations = false,
+    this.animationPreset = AnimationPreset.defaultPreset,
+    this.animationDirection = AnimationDirection.normal,
   });
 
   /// Global font family applied to all coach text.
@@ -381,6 +397,184 @@ class ShowcaseCoachConfig {
   /// ```
   final bool debugMode;
 
+  /// Whether to enable rotation animation on the highlight.
+  ///
+  /// When enabled, the highlight rotates continuously, creating a dynamic
+  /// spinning effect. Useful for drawing attention to important elements.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// enableRotationAnimation: true  // Enable rotation
+  /// ```
+  final bool enableRotationAnimation;
+
+  /// Speed multiplier for rotation animation.
+  ///
+  /// Values between 0.5 and 3.0. Higher values rotate faster.
+  /// Only used when [enableRotationAnimation] is `true`.
+  ///
+  /// Defaults to `1.0`.
+  ///
+  /// ```dart
+  /// rotationAnimationSpeed: 1.5  // 50% faster rotation
+  /// ```
+  final double rotationAnimationSpeed;
+
+  /// Maximum rotation angle in degrees.
+  ///
+  /// Values between 0.0 and 360.0. The highlight will rotate between
+  /// -angle and +angle. Set to 0.0 for no rotation.
+  ///
+  /// Defaults to `0.0`.
+  ///
+  /// ```dart
+  /// rotationAngle: 15.0  // Rotate ±15 degrees
+  /// ```
+  final double rotationAngle;
+
+  /// Duration for fade animations.
+  ///
+  /// Controls fade-in and fade-out animations. If not provided, uses
+  /// [transitionDuration] or defaults to 400ms.
+  ///
+  /// ```dart
+  /// fadeAnimationDuration: Duration(milliseconds: 500)  // Slower fade
+  /// ```
+  final Duration? fadeAnimationDuration;
+
+  /// Curve for fade animations.
+  ///
+  /// If not provided, uses [transitionCurve] or defaults to [Curves.easeOut].
+  ///
+  /// ```dart
+  /// fadeAnimationCurve: Curves.easeInOut  // Smoother fade
+  /// ```
+  final Curve? fadeAnimationCurve;
+
+  /// Duration for scale animations.
+  ///
+  /// Controls scale-up and scale-down animations. If not provided, uses
+  /// [transitionDuration] or defaults to 600ms.
+  ///
+  /// ```dart
+  /// scaleAnimationDuration: Duration(milliseconds: 800)  // Slower scale
+  /// ```
+  final Duration? scaleAnimationDuration;
+
+  /// Curve for scale animations.
+  ///
+  /// If not provided, uses [transitionCurve] or defaults to [Curves.easeOutBack].
+  ///
+  /// ```dart
+  /// scaleAnimationCurve: Curves.elasticOut  // Bouncy scale
+  /// ```
+  final Curve? scaleAnimationCurve;
+
+  /// Range for scale animations (begin, end).
+  ///
+  /// Controls the scale range for animations. Defaults to (0.8, 1.0).
+  ///
+  /// ```dart
+  /// scaleAnimationRange: ScaleRange(0.5, 1.2)  // More dramatic scale
+  /// ```
+  final ScaleRange scaleAnimationRange;
+
+  /// Duration for slide animations.
+  ///
+  /// Controls slide-in and slide-out animations. If not provided, uses
+  /// [transitionDuration] or defaults to 500ms.
+  ///
+  /// ```dart
+  /// slideAnimationDuration: Duration(milliseconds: 600)  // Slower slide
+  /// ```
+  final Duration? slideAnimationDuration;
+
+  /// Curve for slide animations.
+  ///
+  /// If not provided, uses [transitionCurve] or defaults to [Curves.easeOutCubic].
+  ///
+  /// ```dart
+  /// slideAnimationCurve: Curves.easeInOutBack  // Bouncy slide
+  /// ```
+  final Curve? slideAnimationCurve;
+
+  /// Offset for slide animations.
+  ///
+  /// Controls the starting offset for slide animations. If not provided,
+  /// uses default offsets based on position.
+  ///
+  /// ```dart
+  /// slideAnimationOffset: Offset(50, 0)  // Slide from right
+  /// ```
+  final Offset? slideAnimationOffset;
+
+  /// Delay before starting animations.
+  ///
+  /// Adds a delay before any animations begin. Useful for coordinating
+  /// multiple animations or waiting for other UI updates.
+  ///
+  /// Defaults to [Duration.zero].
+  ///
+  /// ```dart
+  /// animationDelay: Duration(milliseconds: 200)  // 200ms delay
+  /// ```
+  final Duration animationDelay;
+
+  /// Delay between staggered animations.
+  ///
+  /// When [enableStaggerAnimations] is `true`, this controls the delay
+  /// between each animation element.
+  ///
+  /// Defaults to [Duration.zero].
+  ///
+  /// ```dart
+  /// staggerAnimationDelay: Duration(milliseconds: 100)  // 100ms between elements
+  /// ```
+  final Duration staggerAnimationDelay;
+
+  /// Whether to enable staggered animations.
+  ///
+  /// When enabled, animations are staggered (started sequentially with delays),
+  /// creating a cascading effect. Useful for complex multi-element animations.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// enableStaggerAnimations: true  // Enable stagger effect
+  /// ```
+  final bool enableStaggerAnimations;
+
+  /// Animation preset to use.
+  ///
+  /// Pre-configured animation styles for common use cases:
+  /// - [AnimationPreset.defaultPreset]: Standard animations (default)
+  /// - [AnimationPreset.smooth]: Smooth, gentle animations
+  /// - [AnimationPreset.bouncy]: Bouncy, energetic animations
+  /// - [AnimationPreset.quick]: Fast, snappy animations
+  /// - [AnimationPreset.dramatic]: Dramatic, attention-grabbing animations
+  ///
+  /// Defaults to [AnimationPreset.defaultPreset].
+  ///
+  /// ```dart
+  /// animationPreset: AnimationPreset.bouncy  // Use bouncy preset
+  /// ```
+  final AnimationPreset animationPreset;
+
+  /// Direction for animations.
+  ///
+  /// Controls the direction of animations:
+  /// - [AnimationDirection.normal]: Standard direction
+  /// - [AnimationDirection.reverse]: Reverse direction
+  /// - [AnimationDirection.alternate]: Alternate between normal and reverse
+  ///
+  /// Defaults to [AnimationDirection.normal].
+  ///
+  /// ```dart
+  /// animationDirection: AnimationDirection.reverse  // Reverse animations
+  /// ```
+  final AnimationDirection animationDirection;
+
   /// Merges a base [TextStyle] with an optional override.
   ///
   /// This is an internal method used to apply configuration overrides to
@@ -452,4 +646,46 @@ enum HighlightShape {
 
   /// Sharp rectangle with no rounding.
   rectangle,
+}
+
+/// Scale range for animations.
+class ScaleRange {
+  /// Creates a scale range with begin and end values.
+  const ScaleRange(this.begin, this.end);
+
+  /// Starting scale value (typically between 0.0 and 1.0).
+  final double begin;
+
+  /// Ending scale value (typically 1.0 or higher for bounce effects).
+  final double end;
+}
+
+/// Animation preset options for common animation styles.
+enum AnimationPreset {
+  /// Default preset with balanced animations.
+  defaultPreset,
+
+  /// Smooth, gentle animations with ease curves.
+  smooth,
+
+  /// Bouncy, energetic animations with elastic curves.
+  bouncy,
+
+  /// Quick, snappy animations with fast durations.
+  quick,
+
+  /// Dramatic, attention-grabbing animations with large scales and bounces.
+  dramatic,
+}
+
+/// Animation direction options.
+enum AnimationDirection {
+  /// Normal animation direction (forward).
+  normal,
+
+  /// Reverse animation direction (backward).
+  reverse,
+
+  /// Alternate between normal and reverse.
+  alternate,
 }
