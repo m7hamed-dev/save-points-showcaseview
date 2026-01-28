@@ -20,6 +20,9 @@ class _CardSurface extends StatefulWidget {
     this.leading,
     this.imageUrl,
     this.imageAsset,
+    this.config,
+    this.skipButtonText,
+    this.nextButtonText,
   });
 
   final Color primary;
@@ -40,6 +43,9 @@ class _CardSurface extends StatefulWidget {
   final Widget? leading;
   final String? imageUrl;
   final String? imageAsset;
+  final ShowcaseCoachConfig? config;
+  final String? skipButtonText;
+  final String? nextButtonText;
 
   @override
   State<_CardSurface> createState() => _CardSurfaceState();
@@ -264,7 +270,10 @@ class _CardSurfaceState extends State<_CardSurface>
                                 vertical: 14,
                               ),
                               child: Text(
-                                widget.step?.skipButtonText ?? 'Skip',
+                                widget.step?.skipButtonText ??
+                                    widget.skipButtonText ??
+                                    widget.config?.skipButtonText ??
+                                    'Skip',
                                 style: widget.buttonStyle.copyWith(
                                   color: widget.colorScheme.onSurface
                                       .withValues(alpha: 0.65),
@@ -283,7 +292,9 @@ class _CardSurfaceState extends State<_CardSurface>
                         widget.step?.onNext?.call();
                         widget.onNext();
                       },
-                      buttonText: widget.step?.nextButtonText,
+                      buttonText: widget.step?.nextButtonText ??
+                          widget.nextButtonText ??
+                          widget.config?.nextButtonText,
                     ),
                   ],
                 ),

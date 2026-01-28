@@ -393,6 +393,8 @@ class _CoachOverlay extends StatefulWidget {
     this.config,
     this.currentStep,
     this.totalSteps,
+    this.skipButtonText,
+    this.nextButtonText,
   });
 
   final CoachStep step;
@@ -403,6 +405,8 @@ class _CoachOverlay extends StatefulWidget {
   final ShowcaseCoachConfig? config;
   final int? currentStep;
   final int? totalSteps;
+  final String? skipButtonText;
+  final String? nextButtonText;
 
   @override
   State<_CoachOverlay> createState() => _CoachOverlayState();
@@ -454,6 +458,8 @@ class _CoachOverlayState extends State<_CoachOverlay> {
         config: widget.config,
         currentStep: widget.currentStep,
         totalSteps: widget.totalSteps,
+        skipButtonText: widget.skipButtonText,
+        nextButtonText: widget.nextButtonText,
       ),
     );
   }
@@ -469,6 +475,8 @@ class _CoachOverlayContent extends StatelessWidget {
     this.config,
     this.currentStep,
     this.totalSteps,
+    this.skipButtonText,
+    this.nextButtonText,
   });
 
   final CoachStep step;
@@ -479,6 +487,8 @@ class _CoachOverlayContent extends StatelessWidget {
   final ShowcaseCoachConfig? config;
   final int? currentStep;
   final int? totalSteps;
+  final String? skipButtonText;
+  final String? nextButtonText;
 
   @override
   Widget build(BuildContext context) {
@@ -792,6 +802,8 @@ class _CoachOverlayContent extends StatelessWidget {
                                   currentStep: currentStep,
                                   totalSteps: totalSteps,
                                   step: step,
+                                  skipButtonText: skipButtonText,
+                                  nextButtonText: nextButtonText,
                                 ),
                               ),
                             ),
@@ -915,6 +927,8 @@ class _CoachOverlayContent extends StatelessWidget {
                           currentStep: currentStep,
                           totalSteps: totalSteps,
                           step: step,
+                          skipButtonText: skipButtonText,
+                          nextButtonText: nextButtonText,
                         ),
                       ),
                     ),

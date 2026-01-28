@@ -72,6 +72,8 @@ class ShowcaseCoachConfig {
     this.enableStaggerAnimations = false,
     this.animationPreset = AnimationPreset.defaultPreset,
     this.animationDirection = AnimationDirection.normal,
+    this.skipButtonText,
+    this.nextButtonText,
   });
 
   /// Global font family applied to all coach text.
@@ -574,6 +576,30 @@ class ShowcaseCoachConfig {
   /// animationDirection: AnimationDirection.reverse  // Reverse animations
   /// ```
   final AnimationDirection animationDirection;
+
+  /// Custom text for the "Skip" button.
+  ///
+  /// If provided, this will be used as the default text for all skip buttons
+  /// unless overridden by a step's [CoachStep.skipButtonText].
+  ///
+  /// If not provided, defaults to "Skip".
+  ///
+  /// ```dart
+  /// skipButtonText: 'Maybe Later'  // Global skip button text
+  /// ```
+  final String? skipButtonText;
+
+  /// Custom text for the "Next" button.
+  ///
+  /// If provided, this will be used as the default text for all next buttons
+  /// unless overridden by a step's [CoachStep.nextButtonText].
+  ///
+  /// If not provided, defaults to "Next" or "Done" for the last step.
+  ///
+  /// ```dart
+  /// nextButtonText: 'Continue'  // Global next button text
+  /// ```
+  final String? nextButtonText;
 
   /// Merges a base [TextStyle] with an optional override.
   ///

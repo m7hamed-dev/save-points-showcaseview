@@ -13,6 +13,8 @@ class _TooltipCard extends StatelessWidget {
     this.currentStep,
     this.totalSteps,
     this.step,
+    this.skipButtonText,
+    this.nextButtonText,
   });
 
   final String title;
@@ -25,6 +27,8 @@ class _TooltipCard extends StatelessWidget {
   final int? currentStep;
   final int? totalSteps;
   final CoachStep? step;
+  final String? skipButtonText;
+  final String? nextButtonText;
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +130,9 @@ class _TooltipCard extends StatelessWidget {
                     leading: step?.leading,
                     imageUrl: step?.imageUrl,
                     imageAsset: step?.imageAsset,
+                    config: config,
+                    skipButtonText: skipButtonText,
+                    nextButtonText: nextButtonText,
                   ),
                 )
               : _CardSurface(
@@ -144,6 +151,9 @@ class _TooltipCard extends StatelessWidget {
                   totalSteps: totalSteps,
                   showProgressIndicator: config?.showProgressIndicator ?? true,
                   step: step,
+                  config: config,
+                  skipButtonText: skipButtonText,
+                  nextButtonText: nextButtonText,
                 ),
         ),
       ),

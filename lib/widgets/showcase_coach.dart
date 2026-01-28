@@ -65,6 +65,12 @@ class ShowcaseCoach {
   ///   Provides the step index (0-based) and the [CoachStep] object.
   /// - [onStepComplete]: Optional callback invoked when a step is completed
   ///   (user presses Next). Provides the step index (0-based) and the [CoachStep] object.
+  /// - [skipButtonText]: Optional text for the "Skip" button. If provided, this will
+  ///   override the config's skipButtonText and be used as the default for all steps
+  ///   unless overridden by a step's [CoachStep.skipButtonText].
+  /// - [nextButtonText]: Optional text for the "Next" button. If provided, this will
+  ///   override the config's nextButtonText and be used as the default for all steps
+  ///   unless overridden by a step's [CoachStep.nextButtonText].
   ///
   /// ## Throws
   ///
@@ -107,6 +113,8 @@ class ShowcaseCoach {
     void Function(int currentStep, int totalSteps)? onStepChanged,
     void Function(int stepIndex, CoachStep step)? onStepStart,
     void Function(int stepIndex, CoachStep step)? onStepComplete,
+    String? skipButtonText,
+    String? nextButtonText,
   }) async {
     if (steps.isEmpty) return;
 
@@ -243,6 +251,8 @@ class ShowcaseCoach {
           ensureVisible: ensureVisible,
           targetRect: targetRect,
           triggerHapticFeedback: triggerHapticFeedback,
+          skipButtonText: skipButtonText,
+          nextButtonText: nextButtonText,
         );
       },
     );
@@ -266,6 +276,8 @@ class _ShowcaseCoachOverlayContent extends StatefulWidget {
     required this.ensureVisible,
     required this.targetRect,
     required this.triggerHapticFeedback,
+    this.skipButtonText,
+    this.nextButtonText,
   });
 
   final ValueNotifier<int> controller;
@@ -280,6 +292,8 @@ class _ShowcaseCoachOverlayContent extends StatefulWidget {
   final Future<void> Function(GlobalKey key) ensureVisible;
   final Rect? Function(GlobalKey key) targetRect;
   final VoidCallback triggerHapticFeedback;
+  final String? skipButtonText;
+  final String? nextButtonText;
 
   @override
   State<_ShowcaseCoachOverlayContent> createState() =>
@@ -369,6 +383,8 @@ class _ShowcaseCoachOverlayContentState
             widget.close();
           },
           config: widget.config,
+          skipButtonText: widget.skipButtonText,
+          nextButtonText: widget.nextButtonText,
         );
       },
     );
