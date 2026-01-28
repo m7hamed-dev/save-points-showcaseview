@@ -135,6 +135,8 @@ class _MyWidgetState extends State<MyWidget> {
   - `overlayTintOpacity`
   - `reduceMotion`: disables blur/heavy effects
   - `showProgressIndicator`: show step progress (default: `true`)
+  - `skipButtonText`: global text for skip buttons (can be overridden per-step or per-tour)
+  - `nextButtonText`: global text for next buttons (can be overridden per-step or per-tour)
 
 ### Visual Effects
 - **Ripple Effect**: `enableRippleEffect` - Expanding circular ripples
@@ -170,11 +172,18 @@ class _MyWidgetState extends State<MyWidget> {
 - `shouldShow`: function returning bool (priority)
 - `showIf`: simple bool (defaults to true)
 - `onNext`, `onSkip`: custom callbacks per step
-- `nextButtonText`, `skipButtonText`: custom button labels
+- `nextButtonText`, `skipButtonText`: custom button labels (highest priority - overrides config and tour-level)
 - `showSkipButton`: hide skip button for critical steps
 - `autoAdvanceAfter`: auto-advance duration for this step
 - `leading`: custom icon/widget to display
 - `imageUrl`, `imageAsset`: images in tooltip cards
+
+### Button Text Customization
+Button text can be customized at three levels (priority order):
+1. **Step-level** (`CoachStep.nextButtonText` / `skipButtonText`) - highest priority
+2. **Tour-level** (`ShowcaseCoach.show()` parameters) - medium priority
+3. **Config-level** (`ShowcaseCoachConfig.nextButtonText` / `skipButtonText`) - default for all tours
+4. **Built-in defaults** - "Next"/"Done" and "Skip" if none specified
 
 ### Advanced Configuration Examples
 
@@ -253,6 +262,10 @@ ShowcaseCoachConfig(
   
   // Debug mode
   debugMode: true,
+  
+  // Custom button text (global defaults)
+  skipButtonText: 'Maybe Later',
+  nextButtonText: 'Continue',
 )
 ```
 
@@ -267,7 +280,7 @@ CoachStep(
   onNext: () => print('Moving to next step'),
   onSkip: () => print('Skipping step'),
   
-  // Custom button text
+  // Custom button text (overrides config and tour-level)
   nextButtonText: 'Continue',
   skipButtonText: 'Maybe Later',
   showSkipButton: true,
@@ -281,6 +294,22 @@ CoachStep(
   // or
   imageAsset: 'assets/images/guide.png',
 )
+```
+
+#### Tour-Level Button Text Override
+```dart
+await ShowcaseCoach.show(
+  context,
+  steps: steps,
+  // Override button text for this entire tour
+  skipButtonText: 'Not Now',
+  nextButtonText: 'Got it!',
+  config: ShowcaseCoachConfig(
+    // Config-level defaults (used if not overridden)
+    skipButtonText: 'Maybe Later',
+    nextButtonText: 'Continue',
+  ),
+);
 ```
 
 ## Validation and safety
