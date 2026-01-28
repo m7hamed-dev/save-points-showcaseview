@@ -25,7 +25,7 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
         fontFamily: 'Inter',
         primaryColor: Color(0xFF4C4AE8),
         overlayTintOpacity: 0.12,
-        cardStyle: ShowcaseCoachCardStyle.normal, // higher-contrast card
+        cardStyle: ShowcaseCoachCardStyle.glass, // higher-contrast card
         reduceMotion: true, // disables blur behind overlay for clarity
         showProgressIndicator: true, // Show step progress
         titleStyle: TextStyle(

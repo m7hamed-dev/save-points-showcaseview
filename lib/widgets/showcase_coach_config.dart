@@ -48,6 +48,14 @@ class ShowcaseCoachConfig {
     this.shadowIntensity = 1.0,
     this.borderStyle = HighlightBorderStyle.solid,
     this.enableShimmerEffect = false,
+    this.enableParticleEffect = false,
+    this.pulseAnimationSpeed = 1.0,
+    this.bounceIntensity = 1.0,
+    this.borderWidth = 3.0,
+    this.borderRadius = 24.0,
+    this.highlightShape = HighlightShape.roundedRectangle,
+    this.dismissOnTapOutside = false,
+    this.debugMode = false,
   });
 
   /// Global font family applied to all coach text.
@@ -277,6 +285,102 @@ class ShowcaseCoachConfig {
   /// ```
   final bool enableShimmerEffect;
 
+  /// Whether to enable particle/sparkle effect around the highlight.
+  ///
+  /// When enabled, floating particles appear around the highlighted widget,
+  /// creating a magical, attention-grabbing effect.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// enableParticleEffect: true  // Enable particle animations
+  /// ```
+  final bool enableParticleEffect;
+
+  /// Speed multiplier for pulse animation.
+  ///
+  /// Values between 0.5 and 3.0. Higher values make the pulse animation faster.
+  /// Lower values make it slower and more subtle.
+  ///
+  /// Defaults to `1.0`.
+  ///
+  /// ```dart
+  /// pulseAnimationSpeed: 1.5  // 50% faster pulse
+  /// ```
+  final double pulseAnimationSpeed;
+
+  /// Intensity multiplier for bounce animation.
+  ///
+  /// Values between 0.0 and 2.0. Higher values create more pronounced bounce.
+  /// Set to `0.0` to disable bounce entirely.
+  ///
+  /// Defaults to `1.0`.
+  ///
+  /// ```dart
+  /// bounceIntensity: 1.5  // More pronounced bounce
+  /// ```
+  final double bounceIntensity;
+
+  /// Width of the highlight border in pixels.
+  ///
+  /// Must be greater than 0. Defaults to `3.0`.
+  ///
+  /// ```dart
+  /// borderWidth: 4.0  // Thicker border
+  /// ```
+  final double borderWidth;
+
+  /// Border radius for the highlight in pixels.
+  ///
+  /// Must be greater than or equal to 0. Defaults to `24.0`.
+  /// Set to `0.0` for sharp corners.
+  ///
+  /// ```dart
+  /// borderRadius: 16.0  // Less rounded corners
+  /// ```
+  final double borderRadius;
+
+  /// Shape of the highlight border.
+  ///
+  /// - [HighlightShape.roundedRectangle]: Rounded rectangle (default)
+  /// - [HighlightShape.circle]: Perfect circle
+  /// - [HighlightShape.rectangle]: Sharp rectangle (no rounding)
+  ///
+  /// Defaults to [HighlightShape.roundedRectangle].
+  ///
+  /// ```dart
+  /// highlightShape: HighlightShape.circle  // Circular highlight
+  /// ```
+  final HighlightShape highlightShape;
+
+  /// Whether to dismiss the tour when tapping outside the highlight area.
+  ///
+  /// When enabled, users can tap anywhere outside the highlighted widget
+  /// to dismiss the tour. This provides a more intuitive way to exit.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// dismissOnTapOutside: true  // Allow tap outside to dismiss
+  /// ```
+  final bool dismissOnTapOutside;
+
+  /// Whether to enable debug mode visualization.
+  ///
+  /// When enabled, displays visual indicators showing:
+  /// - GlobalKey bounds and positions
+  /// - Validation status
+  /// - Step information
+  ///
+  /// Useful for debugging tour setup issues.
+  ///
+  /// Defaults to `false`.
+  ///
+  /// ```dart
+  /// debugMode: true  // Show debug information
+  /// ```
+  final bool debugMode;
+
   /// Merges a base [TextStyle] with an optional override.
   ///
   /// This is an internal method used to apply configuration overrides to
@@ -336,4 +440,16 @@ enum HighlightBorderStyle {
 
   /// Dotted border - small dots.
   dotted,
+}
+
+/// Shape options for the highlight border.
+enum HighlightShape {
+  /// Rounded rectangle with customizable border radius.
+  roundedRectangle,
+
+  /// Perfect circle (uses the smaller dimension as diameter).
+  circle,
+
+  /// Sharp rectangle with no rounding.
+  rectangle,
 }

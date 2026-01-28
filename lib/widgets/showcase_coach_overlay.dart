@@ -23,8 +23,13 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
   @override
   void initState() {
     super.initState();
+    // Calculate duration based on pulse speed multiplier
+    const baseDuration = 2400;
+    final speedMultiplier = widget.config?.pulseAnimationSpeed ?? 1.0;
+    final duration = (baseDuration / speedMultiplier).round();
+    
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2400),
+      duration: Duration(milliseconds: duration),
       vsync: this,
     );
     // Create curve once, reuse it
@@ -52,10 +57,9 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
     super.dispose();
   }
 
-  Border _buildBorder(double opacity) {
+  Border _buildBorder(double opacity, double borderWidth) {
     final borderStyle = widget.config?.borderStyle ?? HighlightBorderStyle.solid;
     final borderColor = Colors.white.withValues(alpha: opacity);
-    const borderWidth = 3.0;
 
     switch (borderStyle) {
       case HighlightBorderStyle.dashed:
@@ -73,6 +77,18 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
           color: borderColor,
           width: borderWidth,
         );
+    }
+  }
+
+  BorderRadius _buildBorderRadius(double borderRadius, HighlightShape shape, double width, double height) {
+    switch (shape) {
+      case HighlightShape.circle:
+        final radius = math.min(width, height) / 2;
+        return BorderRadius.circular(radius);
+      case HighlightShape.rectangle:
+        return BorderRadius.zero;
+      case HighlightShape.roundedRectangle:
+        return BorderRadius.circular(borderRadius);
     }
   }
 
@@ -102,10 +118,16 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
           final blurRadius = (20 + (16 * curved)) * glowMultiplier;
           // Spread radius pulses between 3.0 and 6.0 (smoother range)
           final spreadRadius = (3.0 + (3.0 * curved)) * glowMultiplier;
-          // Bounce scale between 0.96 and 1.04 (subtler bounce)
-          final bounceScale = 0.96 + (0.08 * curved);
+          // Bounce scale with customizable intensity
+          final bounceMultiplier = widget.config?.bounceIntensity ?? 1.0;
+          final bounceScale = 0.96 + (0.08 * curved * bounceMultiplier);
           // Slight float to give a gentle rise/fall (smoother)
           final floatOffset = -1.5 * curved;
+          
+          // Get border properties from config
+          final borderWidth = widget.config?.borderWidth ?? 3.0;
+          final borderRadius = widget.config?.borderRadius ?? 24.0;
+          final highlightShape = widget.config?.highlightShape ?? HighlightShape.roundedRectangle;
 
           return Transform.translate(
             offset: Offset(0, floatOffset),
@@ -115,8 +137,17 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      border: _buildBorder(borderOpacity),
+                      borderRadius: _buildBorderRadius(
+                        borderRadius,
+                        highlightShape,
+                        widget.child is SizedBox
+                            ? (widget.child as SizedBox).width ?? 0
+                            : 0,
+                        widget.child is SizedBox
+                            ? (widget.child as SizedBox).height ?? 0
+                            : 0,
+                      ),
+                      border: _buildBorder(borderOpacity, borderWidth),
                       boxShadow: [
                         if (glowMultiplier > 0)
                           BoxShadow(
@@ -141,7 +172,16 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
                   if (widget.config?.enableShimmerEffect == true && _shimmerController != null)
                     Positioned.fill(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: _buildBorderRadius(
+                          borderRadius,
+                          highlightShape,
+                          widget.child is SizedBox
+                              ? (widget.child as SizedBox).width ?? 0
+                              : 0,
+                          widget.child is SizedBox
+                              ? (widget.child as SizedBox).height ?? 0
+                              : 0,
+                        ),
                         child: IgnorePointer(
                           child: AnimatedBuilder(
                             animation: _shimmerController!,
@@ -150,6 +190,8 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
                                 painter: _ShimmerPainter(
                                   progress: _shimmerController!.value,
                                   color: widget.primary,
+                                  borderRadius: borderRadius,
+                                  shape: highlightShape,
                                 ),
                               );
                             },
@@ -246,7 +288,9 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: widget.primary.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(
+              widget.config?.borderRadius ?? 24.0,
+            ),
           ),
         ),
       ),
@@ -391,6 +435,17 @@ class _CoachOverlayContent extends StatelessWidget {
 
     final content = Stack(
       children: [
+        // Tap detector for dismiss on tap outside
+        if (config?.dismissOnTapOutside == true)
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () {
+                onSkip?.call();
+              },
+              behavior: HitTestBehavior.translucent,
+              child: Container(color: Colors.transparent),
+            ),
+          ),
         Positioned.fill(
           child: AnimatedSwitcher(
             duration: backdropDuration,
@@ -480,6 +535,12 @@ class _CoachOverlayContent extends StatelessWidget {
         if (rect != null)
           Stack(
             children: [
+              // Particle effect
+              if (config?.enableParticleEffect == true)
+                _ParticleEffect(
+                  rect: rect!,
+                  primary: primary,
+                ),
               // Ripple effect
               if (config?.enableRippleEffect == true)
                 _RippleEffect(
@@ -503,6 +564,14 @@ class _CoachOverlayContent extends StatelessWidget {
                   ),
                 ),
               ),
+              // Debug mode visualization
+              if (config?.debugMode == true)
+                _DebugOverlay(
+                  rect: rect!,
+                  step: step,
+                  currentStep: currentStep,
+                  totalSteps: totalSteps,
+                ),
             ],
           ),
 
@@ -758,10 +827,14 @@ class _ShimmerPainter extends CustomPainter {
   _ShimmerPainter({
     required this.progress,
     required this.color,
+    this.borderRadius = 24.0,
+    this.shape = HighlightShape.roundedRectangle,
   });
 
   final double progress;
   final Color color;
+  final double borderRadius;
+  final HighlightShape shape;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -781,13 +854,29 @@ class _ShimmerPainter extends CustomPainter {
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
-    final path = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(0, 0, size.width, size.height),
-          const Radius.circular(24),
-        ),
-      );
+    final path = Path();
+    switch (shape) {
+      case HighlightShape.circle:
+        final radius = math.min(size.width, size.height) / 2;
+        path.addOval(
+          Rect.fromCircle(
+            center: Offset(size.width / 2, size.height / 2),
+            radius: radius,
+          ),
+        );
+        break;
+      case HighlightShape.rectangle:
+        path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+        break;
+      case HighlightShape.roundedRectangle:
+        path.addRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(0, 0, size.width, size.height),
+            Radius.circular(borderRadius),
+          ),
+        );
+        break;
+    }
 
     canvas.drawPath(path, paint);
   }
@@ -919,5 +1008,198 @@ class _RipplePainter extends CustomPainter {
   @override
   bool shouldRepaint(_RipplePainter oldDelegate) {
     return oldDelegate.ripples.length != ripples.length;
+  }
+}
+
+/// Particle effect widget that creates floating particles around the highlight.
+class _ParticleEffect extends StatefulWidget {
+  const _ParticleEffect({
+    required this.rect,
+    required this.primary,
+  });
+
+  final Rect rect;
+  final Color primary;
+
+  @override
+  State<_ParticleEffect> createState() => _ParticleEffectState();
+}
+
+class _ParticleEffectState extends State<_ParticleEffect>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  final List<_Particle> _particles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 20),
+      vsync: this,
+    )..repeat();
+
+    // Initialize particles
+    for (var i = 0; i < 15; i++) {
+      _particles.add(_Particle.random(widget.rect));
+    }
+
+    _controller.addListener(() {
+      setState(() {
+        for (final particle in _particles) {
+          particle.update();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: widget.rect.left - 50,
+      top: widget.rect.top - 50,
+      width: widget.rect.width + 100,
+      height: widget.rect.height + 100,
+      child: IgnorePointer(
+        child: CustomPaint(
+          painter: _ParticlePainter(
+            particles: _particles,
+            color: widget.primary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Particle {
+  _Particle({
+    required this.x,
+    required this.y,
+    required this.vx,
+    required this.vy,
+    required this.size,
+    required this.opacity,
+  });
+
+  double x;
+  double y;
+  double vx;
+  double vy;
+  double size;
+  double opacity;
+
+  factory _Particle.random(Rect bounds) {
+    final random = math.Random();
+    return _Particle(
+      x: bounds.left + random.nextDouble() * bounds.width,
+      y: bounds.top + random.nextDouble() * bounds.height,
+      vx: (random.nextDouble() - 0.5) * 0.5,
+      vy: (random.nextDouble() - 0.5) * 0.5,
+      size: 2 + random.nextDouble() * 3,
+      opacity: 0.3 + random.nextDouble() * 0.5,
+    );
+  }
+
+  void update() {
+    x += vx;
+    y += vy;
+    opacity = 0.3 + (math.sin(x * 0.1) + 1) * 0.25;
+  }
+}
+
+class _ParticlePainter extends CustomPainter {
+  _ParticlePainter({
+    required this.particles,
+    required this.color,
+  });
+
+  final List<_Particle> particles;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final particle in particles) {
+      final paint = Paint()
+        ..color = color.withValues(alpha: particle.opacity)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawCircle(
+        Offset(particle.x, particle.y),
+        particle.size,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ParticlePainter oldDelegate) {
+    return true;
+  }
+}
+
+/// Debug overlay widget that shows visual debugging information.
+class _DebugOverlay extends StatelessWidget {
+  const _DebugOverlay({
+    required this.rect,
+    required this.step,
+    required this.currentStep,
+    required this.totalSteps,
+  });
+
+  final Rect rect;
+  final CoachStep step;
+  final int? currentStep;
+  final int? totalSteps;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: rect.left,
+      top: rect.top - 80,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'DEBUG MODE',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Step: $currentStep/$totalSteps',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            Text(
+              'Title: ${step.title}',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            Text(
+              'Rect: ${rect.left.toStringAsFixed(1)}, ${rect.top.toStringAsFixed(1)}',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            Text(
+              'Size: ${rect.width.toStringAsFixed(1)} x ${rect.height.toStringAsFixed(1)}',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

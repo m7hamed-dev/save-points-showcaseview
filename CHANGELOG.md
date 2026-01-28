@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-01-28
+
+### Added
+- **Particle/Sparkle Effect**: Added optional particle effect with floating particles around highlights
+  - `enableParticleEffect` boolean in `ShowcaseCoachConfig` (default: `false`)
+  - Creates magical floating particles for enhanced visual appeal
+- **Pulse Animation Speed**: Added control over pulse animation speed
+  - `pulseAnimationSpeed` double in `ShowcaseCoachConfig` (default: `1.0`, range: 0.5-3.0)
+  - Allows customizing the speed of pulse animations
+- **Bounce Intensity**: Added control over bounce animation intensity
+  - `bounceIntensity` double in `ShowcaseCoachConfig` (default: `1.0`, range: 0.0-2.0)
+  - Enables fine-tuning of bounce effect strength
+- **Border Customization**: Added border width and radius customization
+  - `borderWidth` double in `ShowcaseCoachConfig` (default: `3.0`)
+  - `borderRadius` double in `ShowcaseCoachConfig` (default: `24.0`)
+  - Full control over highlight border appearance
+- **Highlight Shape Options**: Added different highlight shapes
+  - `highlightShape` enum with options: `roundedRectangle`, `circle`, `rectangle`
+  - `HighlightShape` enum for selecting highlight shape
+  - Supports circular, rectangular, and rounded rectangular highlights
+- **Touch Outside to Dismiss**: Added option to dismiss tour by tapping outside
+  - `dismissOnTapOutside` boolean in `ShowcaseCoachConfig` (default: `false`)
+  - Provides intuitive way to exit tours
+- **Debug Mode**: Added debug visualization mode
+  - `debugMode` boolean in `ShowcaseCoachConfig` (default: `false`)
+  - Shows visual indicators for GlobalKey bounds, step information, and validation status
+  - Useful for debugging tour setup issues
+
+### Improved
+- Enhanced visual customization with shape options
+- Better animation control with speed and intensity multipliers
+- More flexible highlight styling options
+- Improved developer experience with debug mode
+
 ## [1.2.0] - 2025-01-28
 
 ### Added
