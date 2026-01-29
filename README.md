@@ -18,6 +18,7 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 - **Safe by default**: Duplicate key detection, visibility checks, and user-friendly error dialogs with actionable guidance.
 - **Flexible logic**: Per-step and global conditions (`shouldShow` / `showIf`) plus smart scrolling.
 - **Motion-aware**: Reduced-motion mode, customizable transition animations, and comprehensive animation controls.
+- **Multiple overlay styles**: Modern (default), classic, and compact onboarding styles via `overlayStyle`.
 - **Rich visual effects**: Ripple, shimmer, particle effects, rotation, and customizable glow/shadow effects.
 - **Accessible**: Built-in accessibility support with semantic labels, proper tap targets, and keyboard navigation.
 - **Well-documented**: Comprehensive API documentation with examples and best practices.
@@ -131,12 +132,27 @@ class _MyWidgetState extends State<MyWidget> {
 ### Basic Configuration
 - `ShowcaseCoachConfig` lets you tune:
   - `primaryColor`, `buttonColor`, `fontFamily`
+  - `titleStyle`, `bodyStyle`, `buttonTextStyle`
   - `cardStyle`: `glass` (default) or `normal`
+  - `overlayStyle`: `modern` (default), `classic`, or `compact`
   - `overlayTintOpacity`
   - `reduceMotion`: disables blur/heavy effects
   - `showProgressIndicator`: show step progress (default: `true`)
   - `skipButtonText`: global text for skip buttons (can be overridden per-step or per-tour)
   - `nextButtonText`: global text for next buttons (can be overridden per-step or per-tour)
+
+### Overlay styles
+- `ShowcaseOverlayStyle.modern`: gradient overlay + inline Skip/Next (default)
+- `ShowcaseOverlayStyle.classic`: dark overlay + speech-bubble tooltip + Skip fixed bottom-left
+- `ShowcaseOverlayStyle.compact`: dark overlay + smaller bubble near target + Skip fixed bottom-left
+
+```dart
+ShowcaseCoachConfig(
+  overlayStyle: ShowcaseOverlayStyle.classic,
+  primaryColor: Color(0xFFE53935),
+  buttonColor: Color(0xFFE53935),
+)
+```
 
 ### Visual Effects
 - **Ripple Effect**: `enableRippleEffect` - Expanding circular ripples
