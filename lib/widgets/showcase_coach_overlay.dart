@@ -82,7 +82,11 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
   }
 
   BorderRadius _buildBorderRadius(
-      double borderRadius, HighlightShape shape, double width, double height) {
+    double borderRadius,
+    HighlightShape shape,
+    double width,
+    double height,
+  ) {
     switch (shape) {
       case HighlightShape.circle:
         final radius = math.min(width, height) / 2;
@@ -155,7 +159,8 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
                         if (glowMultiplier > 0)
                           BoxShadow(
                             color: widget.primary.withValues(
-                                alpha: baseShadowIntensity * haloWave),
+                              alpha: baseShadowIntensity * haloWave,
+                            ),
                             blurRadius: blurRadius,
                             spreadRadius: spreadRadius,
                           ),
@@ -764,9 +769,9 @@ class _CoachOverlayContent extends StatelessWidget {
                                 final scale = TweenSequence<double>([
                                   TweenSequenceItem(
                                     tween: Tween(
-                                            begin: scaleRange.begin,
-                                            end: scaleRange.end)
-                                        .chain(
+                                      begin: scaleRange.begin,
+                                      end: scaleRange.end,
+                                    ).chain(
                                       CurveTween(curve: scaleCurve),
                                     ),
                                     weight: 70,
@@ -883,9 +888,9 @@ class _CoachOverlayContent extends StatelessWidget {
                           final scale = TweenSequence<double>([
                             TweenSequenceItem(
                               tween: Tween(
-                                      begin: scaleRange.begin,
-                                      end: scaleRange.end)
-                                  .chain(
+                                begin: scaleRange.begin,
+                                end: scaleRange.end,
+                              ).chain(
                                 CurveTween(curve: scaleCurve),
                               ),
                               weight: 70,
@@ -984,7 +989,7 @@ class _CoachOverlayContent extends StatelessWidget {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: config?.buttonColor ?? primary,
+                    color: config?.effectiveButtonColor ?? primary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(

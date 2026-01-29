@@ -23,7 +23,8 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
       context,
       config: const ShowcaseCoachConfig(
         fontFamily: 'Inter',
-        primaryColor: Color(0xFF4C4AE8),
+        overlayStyle: ShowcaseOverlayStyle.modern,
+        primaryColor: Color.fromARGB(255, 25, 173, 9),
         overlayTintOpacity: 0.12,
         cardStyle: ShowcaseCoachCardStyle.glass, // higher-contrast card
         reduceMotion: true, // disables blur behind overlay for clarity

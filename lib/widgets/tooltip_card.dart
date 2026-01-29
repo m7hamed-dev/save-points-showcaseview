@@ -39,7 +39,7 @@ class _TooltipCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final primary = config?.primaryColor ?? colorScheme.primary;
-    final buttonColor = config?.buttonColor ?? primary;
+    final buttonColor = config?.effectiveButtonColor ?? primary;
     final isDark = theme.brightness == Brightness.dark;
 
     final titleStyleBase = theme.textTheme.titleLarge ??

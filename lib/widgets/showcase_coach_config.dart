@@ -109,6 +109,12 @@ class ShowcaseCoachConfig {
   /// If not provided, defaults to [primaryColor] or the theme's primary color.
   final Color? buttonColor;
 
+  /// Returns the effective button color without needing a BuildContext.
+  ///
+  /// This guarantees that if [buttonColor] is null, [primaryColor] is used.
+  /// Widgets can still fall back to the theme primary color if both are null.
+  Color? get effectiveButtonColor => buttonColor ?? primaryColor;
+
   /// If `true`, disables heavier visual effects to improve performance.
   ///
   /// When enabled, this will:
