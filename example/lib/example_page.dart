@@ -137,6 +137,23 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
     );
   }
 
+  Future<void> _startCoachCompact() async {
+    await ShowcaseCoach.show(
+      context,
+      config: const ShowcaseCoachConfig(
+        overlayStyle: ShowcaseOverlayStyle.compact,
+        primaryColor: Color(0xFFE53935),
+        // buttonColor intentionally omitted to test fallback to primaryColor
+        overlayTintOpacity: 0.0,
+        reduceMotion: true,
+        showProgressIndicator: false,
+      ),
+      steps: _buildSteps(),
+      onDone: () => debugPrint('Tour completed!'),
+      onSkip: () => debugPrint('Tour skipped'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -196,33 +213,6 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colorScheme.primary.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.bolt, color: colorScheme.primary),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Showcase ready',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(
-                                    color: colorScheme.primary,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Spacer(),
                       TextButton.icon(
                         onPressed: _startCoach,
                         icon: const Icon(Icons.play_circle),
@@ -233,6 +223,15 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
                         onPressed: _startCoachClassic,
                         icon: const Icon(Icons.touch_app),
                         label: const Text('Classic'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFFE53935),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton.icon(
+                        onPressed: _startCoachCompact,
+                        icon: const Icon(Icons.chat_bubble_outline),
+                        label: const Text('Compact'),
                         style: TextButton.styleFrom(
                           foregroundColor: const Color(0xFFE53935),
                         ),

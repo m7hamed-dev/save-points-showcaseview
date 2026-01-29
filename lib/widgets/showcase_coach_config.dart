@@ -746,4 +746,11 @@ enum ShowcaseOverlayStyle {
   /// Classic onboarding style: dark overlay, white speech-bubble tooltip
   /// with pointer, Skip at bottom-left, prominent Next button.
   classic,
+
+  /// Compact onboarding style: dark overlay, small tooltip bubble near the
+  /// highlighted widget, with an inline Next pill and Skip at bottom-left.
+  ///
+  /// This is useful when you want a lightweight, email-app-style tooltip
+  /// instead of a large coach card.
+  compact,
 }

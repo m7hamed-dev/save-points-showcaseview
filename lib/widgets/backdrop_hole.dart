@@ -75,8 +75,8 @@ class _BackdropHoleState extends State<_BackdropHole>
         final size = Size(constraints.maxWidth, constraints.maxHeight);
         final path = _buildPath(size);
 
-        final isClassic =
-            widget.config?.overlayStyle == ShowcaseOverlayStyle.classic;
+        final isDarkOverlay =
+            widget.config?.overlayStyle != ShowcaseOverlayStyle.modern;
 
         return RepaintBoundary(
           child: ClipPath(
@@ -85,7 +85,7 @@ class _BackdropHoleState extends State<_BackdropHole>
               animation: _controller,
               builder: (context, child) {
                 final gradientOpacity = _opacityAnimation.value;
-                if (isClassic) {
+                if (isDarkOverlay) {
                   return Container(
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(

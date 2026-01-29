@@ -581,9 +581,8 @@ class _CoachOverlayContent extends StatelessWidget {
           ),
         ),
 
-        /// Gradient (skip for classic style — dark overlay only)
-        if (rect != null &&
-            config?.overlayStyle != ShowcaseOverlayStyle.classic)
+        /// Gradient (modern style only)
+        if (rect != null && config?.overlayStyle == ShowcaseOverlayStyle.modern)
           Positioned.fill(
             child: AnimatedSwitcher(
               duration: gradientDuration,
@@ -640,9 +639,8 @@ class _CoachOverlayContent extends StatelessWidget {
             ),
           ),
 
-        /// Highlight (skip glow for classic style — hole only)
-        if (rect != null &&
-            config?.overlayStyle != ShowcaseOverlayStyle.classic)
+        /// Highlight (modern style only)
+        if (rect != null && config?.overlayStyle == ShowcaseOverlayStyle.modern)
           Stack(
             children: [
               // Particle effect
@@ -685,7 +683,7 @@ class _CoachOverlayContent extends StatelessWidget {
             ],
           ),
 
-        /// Card positioned above widget
+        /// Card / Tooltip
         if (rect != null)
           Builder(
             builder: (context) {
@@ -694,10 +692,68 @@ class _CoachOverlayContent extends StatelessWidget {
               final size = MediaQuery.sizeOf(context);
               final safe = MediaQuery.paddingOf(context);
 
+              // For compact style, we use a fixed-height bubble, so we can
+              // compute placement deterministically.
+              const compactBubbleTotalHeight = 54.0; // 44 body + 10 pointer
               final spaceAbove = rect!.top - safe.top - spacing;
               final spaceBelow =
                   size.height - rect!.bottom - safe.bottom - spacing;
-              final placeAbove = spaceAbove >= spaceBelow;
+              final placeAbove =
+                  (config?.overlayStyle == ShowcaseOverlayStyle.compact)
+                      ? (spaceAbove >= compactBubbleTotalHeight)
+                      : (spaceAbove >= spaceBelow);
+
+              if (config?.overlayStyle == ShowcaseOverlayStyle.compact) {
+                final maxBubbleWidth = math.min(
+                  260.0,
+                  size.width - (horizontalPadding * 2),
+                );
+                final left = rect!.left.clamp(
+                  horizontalPadding,
+                  size.width - maxBubbleWidth - horizontalPadding,
+                );
+                final top = placeAbove
+                    ? (rect!.top - spacing - compactBubbleTotalHeight)
+                    : (rect!.bottom + spacing);
+                final pointerX = (rect!.center.dx - left).clamp(
+                  20.0,
+                  maxBubbleWidth - 20.0,
+                );
+
+                final bubbleText = step.description.isNotEmpty
+                    ? step.description.first
+                    : step.title;
+                final nextText = step.nextButtonText ??
+                    nextButtonText ??
+                    config?.nextButtonText ??
+                    (isLast ? 'Done' : 'Next');
+                final effectiveButtonColor =
+                    config?.effectiveButtonColor ?? primary;
+
+                return Positioned(
+                  left: left,
+                  top: top,
+                  width: maxBubbleWidth,
+                  height: compactBubbleTotalHeight,
+                  child: AnimatedSwitcher(
+                    duration: cardDuration,
+                    switchInCurve: transitionCurve,
+                    switchOutCurve: transitionCurve,
+                    child: _CompactTooltipBubble(
+                      key: ValueKey(
+                        'compact_${step.title}_${step.targetKey.hashCode}',
+                      ),
+                      text: bubbleText,
+                      buttonColor: effectiveButtonColor,
+                      nextText: nextText,
+                      isLast: isLast,
+                      placeAbove: placeAbove,
+                      pointerX: pointerX,
+                      onNext: onNext,
+                    ),
+                  ),
+                );
+              }
 
               final positioned = Positioned(
                 left: 0,
@@ -967,7 +1023,7 @@ class _CoachOverlayContent extends StatelessWidget {
             ),
           ),
         // Classic style: Skip button fixed at bottom-left
-        if (config?.overlayStyle == ShowcaseOverlayStyle.classic &&
+        if (config?.overlayStyle != ShowcaseOverlayStyle.modern &&
             onSkip != null &&
             step.showSkipButton)
           Positioned(
