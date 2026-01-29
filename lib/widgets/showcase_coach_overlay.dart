@@ -27,7 +27,7 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
     const baseDuration = 2400;
     final speedMultiplier = widget.config?.pulseAnimationSpeed ?? 1.0;
     final duration = (baseDuration / speedMultiplier).round();
-    
+
     _controller = AnimationController(
       duration: Duration(milliseconds: duration),
       vsync: this,
@@ -58,7 +58,8 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
   }
 
   Border _buildBorder(double opacity, double borderWidth) {
-    final borderStyle = widget.config?.borderStyle ?? HighlightBorderStyle.solid;
+    final borderStyle =
+        widget.config?.borderStyle ?? HighlightBorderStyle.solid;
     final borderColor = Colors.white.withValues(alpha: opacity);
 
     switch (borderStyle) {
@@ -80,7 +81,8 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
     }
   }
 
-  BorderRadius _buildBorderRadius(double borderRadius, HighlightShape shape, double width, double height) {
+  BorderRadius _buildBorderRadius(
+      double borderRadius, HighlightShape shape, double width, double height) {
     switch (shape) {
       case HighlightShape.circle:
         final radius = math.min(width, height) / 2;
@@ -111,7 +113,7 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
           // Apply glow intensity multiplier
           final glowMultiplier = widget.config?.glowIntensity ?? 1.0;
           final shadowMultiplier = widget.config?.shadowIntensity ?? 1.0;
-          
+
           // Shadow intensity pulses between 0.18 and 0.42 (enhanced range)
           final baseShadowIntensity = (0.18 + (0.24 * curved)) * glowMultiplier;
           // Blur radius pulses between 20 and 36 (smoother range)
@@ -123,11 +125,12 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
           final bounceScale = 0.96 + (0.08 * curved * bounceMultiplier);
           // Slight float to give a gentle rise/fall (smoother)
           final floatOffset = -1.5 * curved;
-          
+
           // Get border properties from config
           final borderWidth = widget.config?.borderWidth ?? 3.0;
           final borderRadius = widget.config?.borderRadius ?? 24.0;
-          final highlightShape = widget.config?.highlightShape ?? HighlightShape.roundedRectangle;
+          final highlightShape =
+              widget.config?.highlightShape ?? HighlightShape.roundedRectangle;
 
           return Transform.translate(
             offset: Offset(0, floatOffset),
@@ -151,8 +154,8 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
                       boxShadow: [
                         if (glowMultiplier > 0)
                           BoxShadow(
-                            color: widget.primary
-                                .withValues(alpha: baseShadowIntensity * haloWave),
+                            color: widget.primary.withValues(
+                                alpha: baseShadowIntensity * haloWave),
                             blurRadius: blurRadius,
                             spreadRadius: spreadRadius,
                           ),
@@ -169,7 +172,8 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
                     child: widget.child,
                   ),
                   // Shimmer overlay
-                  if (widget.config?.enableShimmerEffect == true && _shimmerController != null)
+                  if (widget.config?.enableShimmerEffect == true &&
+                      _shimmerController != null)
                     Positioned.fill(
                       child: ClipRRect(
                         borderRadius: _buildBorderRadius(
@@ -235,7 +239,7 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
   @override
   void initState() {
     super.initState();
-    
+
     // Get animation durations from config
     final scaleDuration = widget.config?.scaleAnimationDuration ??
         widget.config?.transitionDuration ??
@@ -243,7 +247,7 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
     final fadeDuration = widget.config?.fadeAnimationDuration ??
         widget.config?.transitionDuration ??
         const Duration(milliseconds: 400);
-    
+
     // Get animation curves from config
     final scaleCurve = widget.config?.scaleAnimationCurve ??
         widget.config?.transitionCurve ??
@@ -251,14 +255,14 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
     final fadeCurve = widget.config?.fadeAnimationCurve ??
         widget.config?.transitionCurve ??
         Curves.easeOut;
-    
+
     // Get scale range from config
-    final scaleRange = widget.config?.scaleAnimationRange ??
-        const ScaleRange(0.8, 1.0);
-    
+    final scaleRange =
+        widget.config?.scaleAnimationRange ?? const ScaleRange(0.8, 1.0);
+
     // Apply animation delay
     final delay = widget.config?.animationDelay ?? Duration.zero;
-    
+
     _controller = AnimationController(
       duration: scaleDuration,
       vsync: this,
@@ -281,7 +285,8 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
     // Fade animation with configurable curve
     // Calculate interval end, ensuring it doesn't exceed 1.0
     final fadeIntervalEnd = scaleDuration.inMilliseconds > 0
-        ? (fadeDuration.inMilliseconds / scaleDuration.inMilliseconds).clamp(0.0, 1.0)
+        ? (fadeDuration.inMilliseconds / scaleDuration.inMilliseconds)
+            .clamp(0.0, 1.0)
         : 1.0;
     _opacityAnimation = CurvedAnimation(
       parent: _controller,
@@ -292,12 +297,12 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
     if (widget.config?.enableRotationAnimation == true) {
       final rotationSpeed = widget.config?.rotationAnimationSpeed ?? 1.0;
       final rotationAngle = widget.config?.rotationAngle ?? 0.0;
-      
+
       _rotationController = AnimationController(
         duration: Duration(milliseconds: (2000 / rotationSpeed).round()),
         vsync: this,
       );
-      
+
       _rotationAnimation = Tween<double>(
         begin: -rotationAngle,
         end: rotationAngle,
@@ -307,10 +312,11 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
           curve: Curves.easeInOut,
         ),
       );
-      
+
       if (widget.config?.animationDirection == AnimationDirection.reverse) {
         _rotationController!.repeat(reverse: true);
-      } else if (widget.config?.animationDirection == AnimationDirection.alternate) {
+      } else if (widget.config?.animationDirection ==
+          AnimationDirection.alternate) {
         _rotationController!.repeat(reverse: true);
       } else {
         _rotationController!.repeat();
@@ -366,7 +372,8 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
     );
 
     // Add rotation if enabled
-    if (widget.config?.enableRotationAnimation == true && _rotationAnimation != null) {
+    if (widget.config?.enableRotationAnimation == true &&
+        _rotationAnimation != null) {
       child = AnimatedBuilder(
         animation: _rotationAnimation!,
         builder: (context, child) {
@@ -564,12 +571,14 @@ class _CoachOverlayContent extends StatelessWidget {
             child: _BackdropHole(
               key: ValueKey(rect?.hashCode ?? 0),
               rect: rect,
+              config: config,
             ),
           ),
         ),
 
-        /// Gradient
-        if (rect != null)
+        /// Gradient (skip for classic style — dark overlay only)
+        if (rect != null &&
+            config?.overlayStyle != ShowcaseOverlayStyle.classic)
           Positioned.fill(
             child: AnimatedSwitcher(
               duration: gradientDuration,
@@ -626,8 +635,9 @@ class _CoachOverlayContent extends StatelessWidget {
             ),
           ),
 
-        /// Highlight
-        if (rect != null)
+        /// Highlight (skip glow for classic style — hole only)
+        if (rect != null &&
+            config?.overlayStyle != ShowcaseOverlayStyle.classic)
           Stack(
             children: [
               // Particle effect
@@ -726,11 +736,13 @@ class _CoachOverlayContent extends StatelessWidget {
                                 );
 
                                 // Slide animation with configurable options
-                                final slideOffset = config?.slideAnimationOffset ??
-                                    Offset(0.0, placeAbove ? -0.2 : 0.2);
-                                final slideCurve = config?.slideAnimationCurve ??
-                                    config?.transitionCurve ??
-                                    Curves.easeOutBack;
+                                final slideOffset =
+                                    config?.slideAnimationOffset ??
+                                        Offset(0.0, placeAbove ? -0.2 : 0.2);
+                                final slideCurve =
+                                    config?.slideAnimationCurve ??
+                                        config?.transitionCurve ??
+                                        Curves.easeOutBack;
                                 final slide = Tween<Offset>(
                                   begin: slideOffset,
                                   end: Offset.zero,
@@ -742,20 +754,27 @@ class _CoachOverlayContent extends StatelessWidget {
                                 );
 
                                 // Scale animation with configurable options
-                                final scaleRange = config?.scaleAnimationRange ??
-                                    const ScaleRange(0.8, 1.0);
-                                final scaleCurve = config?.scaleAnimationCurve ??
-                                    config?.transitionCurve ??
-                                    Curves.easeOutBack;
+                                final scaleRange =
+                                    config?.scaleAnimationRange ??
+                                        const ScaleRange(0.8, 1.0);
+                                final scaleCurve =
+                                    config?.scaleAnimationCurve ??
+                                        config?.transitionCurve ??
+                                        Curves.easeOutBack;
                                 final scale = TweenSequence<double>([
                                   TweenSequenceItem(
-                                    tween: Tween(begin: scaleRange.begin, end: scaleRange.end).chain(
+                                    tween: Tween(
+                                            begin: scaleRange.begin,
+                                            end: scaleRange.end)
+                                        .chain(
                                       CurveTween(curve: scaleCurve),
                                     ),
                                     weight: 70,
                                   ),
                                   TweenSequenceItem(
-                                    tween: Tween(begin: scaleRange.end, end: 1.0).chain(
+                                    tween:
+                                        Tween(begin: scaleRange.end, end: 1.0)
+                                            .chain(
                                       CurveTween(curve: Curves.easeInOut),
                                     ),
                                     weight: 30,
@@ -804,6 +823,7 @@ class _CoachOverlayContent extends StatelessWidget {
                                   step: step,
                                   skipButtonText: skipButtonText,
                                   nextButtonText: nextButtonText,
+                                  tooltipPlaceAbove: placeAbove,
                                 ),
                               ),
                             ),
@@ -862,13 +882,17 @@ class _CoachOverlayContent extends StatelessWidget {
                               Curves.easeOutBack;
                           final scale = TweenSequence<double>([
                             TweenSequenceItem(
-                              tween: Tween(begin: scaleRange.begin, end: scaleRange.end).chain(
+                              tween: Tween(
+                                      begin: scaleRange.begin,
+                                      end: scaleRange.end)
+                                  .chain(
                                 CurveTween(curve: scaleCurve),
                               ),
                               weight: 70,
                             ),
                             TweenSequenceItem(
-                              tween: Tween(begin: scaleRange.end, end: 1.0).chain(
+                              tween:
+                                  Tween(begin: scaleRange.end, end: 1.0).chain(
                                 CurveTween(curve: Curves.easeInOut),
                               ),
                               weight: 30,
@@ -935,6 +959,47 @@ class _CoachOverlayContent extends StatelessWidget {
                   ),
                 );
               },
+            ),
+          ),
+        // Classic style: Skip button fixed at bottom-left
+        if (config?.overlayStyle == ShowcaseOverlayStyle.classic &&
+            onSkip != null &&
+            step.showSkipButton)
+          Positioned(
+            left: 20,
+            bottom: MediaQuery.paddingOf(context).bottom + 20,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  step.onSkip?.call();
+                  onSkip!();
+                },
+                borderRadius: BorderRadius.circular(12),
+                splashColor: primary.withValues(alpha: 0.2),
+                highlightColor: primary.withValues(alpha: 0.1),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: config?.buttonColor ?? primary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    step.skipButtonText ??
+                        skipButtonText ??
+                        config?.skipButtonText ??
+                        'Skip',
+                    style: (theme.textTheme.labelLarge ?? const TextStyle())
+                        .copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
       ],
@@ -1051,13 +1116,15 @@ class _RippleEffectState extends State<_RippleEffect>
     _controller.addListener(() {
       if (_controller.value % 0.5 < 0.01) {
         setState(() {
-          _ripples.add(_Ripple(
-            startTime: DateTime.now(),
-            center: Offset(
-              widget.rect.center.dx,
-              widget.rect.center.dy,
+          _ripples.add(
+            _Ripple(
+              startTime: DateTime.now(),
+              center: Offset(
+                widget.rect.center.dx,
+                widget.rect.center.dy,
+              ),
             ),
-          ),);
+          );
         });
       }
 

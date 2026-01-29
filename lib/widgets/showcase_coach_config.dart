@@ -74,6 +74,7 @@ class ShowcaseCoachConfig {
     this.animationDirection = AnimationDirection.normal,
     this.skipButtonText,
     this.nextButtonText,
+    this.overlayStyle = ShowcaseOverlayStyle.modern,
   });
 
   /// Global font family applied to all coach text.
@@ -601,6 +602,21 @@ class ShowcaseCoachConfig {
   /// ```
   final String? nextButtonText;
 
+  /// Optional showcase overlay style for a different look.
+  ///
+  /// - [ShowcaseOverlayStyle.modern]: Current design (gradient overlay,
+  ///   glass/solid card, inline Skip/Next).
+  /// - [ShowcaseOverlayStyle.classic]: Dark semi-transparent overlay,
+  ///   white speech-bubble tooltip with pointer, Skip fixed at bottom-left,
+  ///   red-accent Next button (use [primaryColor]/[buttonColor] for red).
+  ///
+  /// Defaults to [ShowcaseOverlayStyle.modern].
+  ///
+  /// ```dart
+  /// overlayStyle: ShowcaseOverlayStyle.classic  // Email-app style onboarding
+  /// ```
+  final ShowcaseOverlayStyle overlayStyle;
+
   /// Merges a base [TextStyle] with an optional override.
   ///
   /// This is an internal method used to apply configuration overrides to
@@ -714,4 +730,14 @@ enum AnimationDirection {
 
   /// Alternate between normal and reverse.
   alternate,
+}
+
+/// Overlay style for the showcase coach (optional effect).
+enum ShowcaseOverlayStyle {
+  /// Modern style: gradient overlay, glass/solid card, inline buttons.
+  modern,
+
+  /// Classic onboarding style: dark overlay, white speech-bubble tooltip
+  /// with pointer, Skip at bottom-left, prominent Next button.
+  classic,
 }

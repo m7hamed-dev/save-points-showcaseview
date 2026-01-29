@@ -42,71 +42,97 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
           fontWeight: FontWeight.w700,
         ),
       ),
-      // Step change callbacks for analytics/tracking
-      onStepChanged: (current, total) {
-        debugPrint('Step $current of $total');
-      },
-      onStepStart: (index, step) {
-        debugPrint('Started step: ${step.title}');
-      },
-      onStepComplete: (index, step) {
-        debugPrint('Completed step: ${step.title}');
-      },
-      steps: [
-        CoachStep(
-          targetKey: _cardKey,
-          title: 'Context card',
-          description: [
-            'Use a friendly, elevated card to explain what the user is seeing.',
-            'Any widget can be targeted as long as it has a unique GlobalKey.',
-          ],
+      onDone: () => debugPrint('Tour completed!'),
+      onSkip: () => debugPrint('Tour skipped'),
+      onStepChanged: (current, total) => debugPrint('Step $current of $total'),
+      onStepStart: (index, step) => debugPrint('Started step: ${step.title}'),
+      onStepComplete: (index, step) =>
+          debugPrint('Completed step: ${step.title}'),
+      steps: _buildSteps(),
+    );
+  }
+
+  /// Builds the list of coach steps (shared by modern and classic tours).
+  List<CoachStep> _buildSteps() {
+    return [
+      CoachStep(
+        targetKey: _cardKey,
+        title: 'Context card',
+        description: [
+          'Use a friendly, elevated card to explain what the user is seeing.',
+          'Any widget can be targeted as long as it has a unique GlobalKey.',
+        ],
+      ),
+      CoachStep(
+        targetKey: _infoKey,
+        title: 'Quick info icon',
+        description: [
+          'Attach steps to icons, chips, or any tappable element.',
+        ],
+        nextButtonText: 'Got it!',
+      ),
+      CoachStep(
+        targetKey: _ctaKey,
+        title: 'Primary call-to-action',
+        description: ['Highlight the action you want users to take next.'],
+        onNext: () => debugPrint('Custom action: User proceeding to CTA step'),
+      ),
+      CoachStep(
+        targetKey: _homeKey,
+        title: 'Navigation item',
+        description: ['Bottom navigation items can also be showcased.'],
+      ),
+      CoachStep(
+        targetKey: _settingsKey,
+        title: 'Another navigation item',
+        description: ['You can guide users through multiple destinations.'],
+        showSkipButton: false,
+      ),
+      CoachStep(
+        targetKey: _centerTextKey,
+        title: 'Content highlight',
+        description: [
+          'Call attention to messaging or tips inside the layout.',
+        ],
+        nextButtonText: 'Finish',
+      ),
+    ];
+  }
+
+  /// Starts the showcase with the optional classic effect: dark overlay,
+  /// white speech-bubble tooltip with pointer, Skip at bottom-left, red buttons.
+  Future<void> _startCoachClassic() async {
+    await ShowcaseCoach.show(
+      context,
+      config: const ShowcaseCoachConfig(
+        overlayStyle: ShowcaseOverlayStyle.classic,
+        primaryColor: Color(0xFFE53935),
+        buttonColor: Color(0xFFE53935),
+        overlayTintOpacity: 0.0,
+        reduceMotion: true,
+        showProgressIndicator: false,
+        titleStyle: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          color: Color(0xFF0F172A),
         ),
-        CoachStep(
-          targetKey: _infoKey,
-          title: 'Quick info icon',
-          description: [
-            'Attach steps to icons, chips, or any tappable element.',
-          ],
-          // Custom button text example
-          nextButtonText: 'Got it!',
+        bodyStyle: TextStyle(
+          fontSize: 14,
+          height: 1.5,
+          color: Color(0xFF475569),
         ),
-        CoachStep(
-          targetKey: _ctaKey,
-          title: 'Primary call-to-action',
-          description: ['Highlight the action you want users to take next.'],
-          // Custom action on next
-          onNext: () {
-            debugPrint('Custom action: User proceeding to CTA step');
-          },
+        buttonTextStyle: TextStyle(
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
-        CoachStep(
-          targetKey: _homeKey,
-          title: 'Navigation item',
-          description: ['Bottom navigation items can also be showcased.'],
-        ),
-        CoachStep(
-          targetKey: _settingsKey,
-          title: 'Another navigation item',
-          description: ['You can guide users through multiple destinations.'],
-          // Hide skip button for important step
-          showSkipButton: false,
-        ),
-        CoachStep(
-          targetKey: _centerTextKey,
-          title: 'Content highlight',
-          description: [
-            'Call attention to messaging or tips inside the layout.',
-          ],
-          // Custom button text for last step
-          nextButtonText: 'Finish',
-        ),
-      ],
-      onDone: () {
-        debugPrint('Tour completed!');
-      },
-      onSkip: () {
-        debugPrint('Tour skipped');
-      },
+      ),
+      onStepChanged: (current, total) => debugPrint('Step $current of $total'),
+      onStepStart: (index, step) => debugPrint('Started step: ${step.title}'),
+      onStepComplete: (index, step) =>
+          debugPrint('Completed step: ${step.title}'),
+      steps: _buildSteps(),
+      onDone: () => debugPrint('Tour completed!'),
+      onSkip: () => debugPrint('Tour skipped'),
     );
   }
 
@@ -200,6 +226,15 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
                         onPressed: _startCoach,
                         icon: const Icon(Icons.play_circle),
                         label: const Text('Preview'),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton.icon(
+                        onPressed: _startCoachClassic,
+                        icon: const Icon(Icons.touch_app),
+                        label: const Text('Classic'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFFE53935),
+                        ),
                       ),
                     ],
                   ),

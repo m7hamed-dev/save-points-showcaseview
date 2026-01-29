@@ -139,8 +139,8 @@ class _CardSurfaceState extends State<_CardSurface>
                             ),
                             child: FractionallySizedBox(
                               alignment: Alignment.centerLeft,
-                              widthFactor: widget.currentStep! /
-                                  widget.totalSteps!,
+                              widthFactor:
+                                  widget.currentStep! / widget.totalSteps!,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
@@ -182,10 +182,12 @@ class _CardSurfaceState extends State<_CardSurface>
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
                                     height: 200,
-                                    color: widget.colorScheme.surfaceContainerHighest,
+                                    color: widget
+                                        .colorScheme.surfaceContainerHighest,
                                     child: Icon(
                                       Icons.broken_image,
-                                      color: widget.colorScheme.onSurface.withValues(alpha: 0.3),
+                                      color: widget.colorScheme.onSurface
+                                          .withValues(alpha: 0.3),
                                       size: 48,
                                     ),
                                   );
@@ -197,10 +199,12 @@ class _CardSurfaceState extends State<_CardSurface>
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
                                     height: 200,
-                                    color: widget.colorScheme.surfaceContainerHighest,
+                                    color: widget
+                                        .colorScheme.surfaceContainerHighest,
                                     child: Icon(
                                       Icons.broken_image,
-                                      color: widget.colorScheme.onSurface.withValues(alpha: 0.3),
+                                      color: widget.colorScheme.onSurface
+                                          .withValues(alpha: 0.3),
                                       size: 48,
                                     ),
                                   );
@@ -215,7 +219,10 @@ class _CardSurfaceState extends State<_CardSurface>
                   style: widget.titleStyle.copyWith(
                     letterSpacing: -0.8,
                     height: 1.2,
-                    color: widget.colorScheme.onSurface,
+                    color: widget.config?.overlayStyle ==
+                            ShowcaseOverlayStyle.classic
+                        ? const Color(0xFF0F172A)
+                        : widget.colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -225,8 +232,11 @@ class _CardSurfaceState extends State<_CardSurface>
                     style: widget.bodyStyle.copyWith(
                       height: 1.65,
                       letterSpacing: -0.2,
-                      color:
-                          widget.colorScheme.onSurface.withValues(alpha: 0.75),
+                      color: widget.config?.overlayStyle ==
+                              ShowcaseOverlayStyle.classic
+                          ? const Color(0xFF475569)
+                          : widget.colorScheme.onSurface
+                              .withValues(alpha: 0.75),
                     ),
                   )
                 else
@@ -248,7 +258,9 @@ class _CardSurfaceState extends State<_CardSurface>
                 Row(
                   children: [
                     if (widget.onSkip != null &&
-                        (widget.step?.showSkipButton ?? true))
+                        (widget.step?.showSkipButton ?? true) &&
+                        widget.config?.overlayStyle !=
+                            ShowcaseOverlayStyle.classic)
                       Material(
                         color: Colors.transparent,
                         child: Semantics(
@@ -441,8 +453,7 @@ class _AnimatedButtonState extends State<_AnimatedButton>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      widget.buttonText ??
-                          (widget.isLast ? 'Done' : 'Next'),
+                      widget.buttonText ?? (widget.isLast ? 'Done' : 'Next'),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,

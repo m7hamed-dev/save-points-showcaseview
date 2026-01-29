@@ -1,9 +1,14 @@
 part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
 class _BackdropHole extends StatefulWidget {
-  const _BackdropHole({super.key, required this.rect});
+  const _BackdropHole({
+    super.key,
+    required this.rect,
+    this.config,
+  });
 
   final Rect? rect;
+  final ShowcaseCoachConfig? config;
 
   @override
   State<_BackdropHole> createState() => _BackdropHoleState();
@@ -70,15 +75,26 @@ class _BackdropHoleState extends State<_BackdropHole>
         final size = Size(constraints.maxWidth, constraints.maxHeight);
         final path = _buildPath(size);
 
+        final isClassic =
+            widget.config?.overlayStyle == ShowcaseOverlayStyle.classic;
+
         return RepaintBoundary(
           child: ClipPath(
             clipper: _HoleClipper(path),
             child: AnimatedBuilder(
               animation: _controller,
               builder: (context, child) {
-                final blurSigma = _blurAnimation.value;
                 final gradientOpacity = _opacityAnimation.value;
-
+                if (isClassic) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(
+                        alpha: 0.72 * gradientOpacity.clamp(0.0, 1.0),
+                      ),
+                    ),
+                  );
+                }
+                final blurSigma = _blurAnimation.value;
                 return BackdropFilter(
                   filter:
                       ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
