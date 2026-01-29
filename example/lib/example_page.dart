@@ -211,14 +211,17 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
+                  Material(
+                    color: colorScheme.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    clipBehavior: Clip.antiAlias,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: _types(),
                     ),
-                    child: _types(),
                   ),
                   const SizedBox(height: 18),
                   Text(
@@ -379,30 +382,31 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
     );
   }
 
-  Row _types() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _types() {
+    // Using Wrap improves click targets and avoids overflows on small screens.
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 8,
+      runSpacing: 8,
       children: [
-        TextButton.icon(
+        FilledButton.tonalIcon(
           onPressed: _startCoach,
           icon: const Icon(Icons.play_circle),
-          label: const Text('1. Preview'),
+          label: const Text('Preview'),
         ),
-        const SizedBox(width: 8),
-        TextButton.icon(
+        FilledButton.tonalIcon(
           onPressed: _startCoachClassic,
           icon: const Icon(Icons.touch_app),
-          label: const Text('2. Classic'),
-          style: TextButton.styleFrom(
+          label: const Text('Classic'),
+          style: FilledButton.styleFrom(
             foregroundColor: const Color(0xFFE53935),
           ),
         ),
-        const SizedBox(width: 8),
-        TextButton.icon(
+        FilledButton.tonalIcon(
           onPressed: _startCoachCompact,
           icon: const Icon(Icons.chat_bubble_outline),
-          label: const Text('3. Compact'),
-          style: TextButton.styleFrom(
+          label: const Text('Compact'),
+          style: FilledButton.styleFrom(
             foregroundColor: const Color.fromARGB(255, 19, 25, 189),
           ),
         ),
