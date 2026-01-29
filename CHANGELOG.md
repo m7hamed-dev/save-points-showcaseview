@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-01-28
+
+### Added
+- **Overlay styles**: Documented `ShowcaseOverlayStyle` in README
+  - `modern` (default), `classic`, and `compact` with usage examples
+  - Basic config section now includes `overlayStyle` and text style options
+
+### Improved
+- Example app: overlay type selector uses `FilledButton.tonalIcon` and `Wrap` for better tap targets and layout on small screens
+- Example container for type buttons uses `Material` with clip for proper ink/ripple feedback
+
 ## [1.5.0] - 2026-01-28
 
 ### Added
