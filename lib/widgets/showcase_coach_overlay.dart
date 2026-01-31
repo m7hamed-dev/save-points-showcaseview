@@ -508,8 +508,6 @@ class _CoachOverlayContent extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final primary = config?.primaryColor ?? colorScheme.primary;
 
-    const blurSigma = 8.0;
-
     // Determine if transitions should be enabled
     final transitionsEnabled = config?.enableTransitions ?? true;
 
@@ -1064,15 +1062,6 @@ class _CoachOverlayContent extends StatelessWidget {
           ),
       ],
     );
-
-    if (blurSigma > 0) {
-      return ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-          child: content,
-        ),
-      );
-    }
 
     return content;
   }
