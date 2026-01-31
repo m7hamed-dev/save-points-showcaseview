@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Save Points Explainer',
+      title: 'Save Points Show Case View',
       theme: ThemeData(
         colorScheme: baseScheme.copyWith(
           surface: const Color(0xFFF8F7FF),
