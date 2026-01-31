@@ -91,7 +91,6 @@ class ShowcaseCoach {
   ///   ],
   ///   config: ShowcaseCoachConfig(
   ///     primaryColor: Colors.blue,
-  ///     reduceMotion: false,
   ///   ),
   ///   onDone: () {
   ///     print('Tour completed!');

@@ -72,18 +72,15 @@ void main() {
       const config = ShowcaseCoachConfig();
 
       expect(config.cardStyle, ShowcaseCoachCardStyle.glass);
-      expect(config.reduceMotion, false);
     });
 
     test('should create config with custom values', () {
       const config = ShowcaseCoachConfig(
         cardStyle: ShowcaseCoachCardStyle.normal,
-        reduceMotion: true,
         primaryColor: Colors.blue,
       );
 
       expect(config.cardStyle, ShowcaseCoachCardStyle.normal);
-      expect(config.reduceMotion, true);
       expect(config.primaryColor, Colors.blue);
     });
   });

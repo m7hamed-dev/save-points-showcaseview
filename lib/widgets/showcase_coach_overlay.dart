@@ -508,11 +508,10 @@ class _CoachOverlayContent extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final primary = config?.primaryColor ?? colorScheme.primary;
 
-    final blurSigma = (config?.reduceMotion ?? false) ? 0.0 : 8.0;
+    const blurSigma = 8.0;
 
     // Determine if transitions should be enabled
-    final transitionsEnabled =
-        config?.enableTransitions ?? !(config?.reduceMotion ?? false);
+    final transitionsEnabled = config?.enableTransitions ?? true;
 
     // Get transition durations with fallbacks
     final backdropDuration = transitionsEnabled

@@ -58,8 +58,7 @@ class _TooltipCard extends StatelessWidget {
 
     final isClassic = config?.overlayStyle == ShowcaseOverlayStyle.classic;
     final useGlass = !isClassic &&
-        config?.cardStyle == ShowcaseCoachCardStyle.glass &&
-        (config?.reduceMotion != true);
+        config?.cardStyle == ShowcaseCoachCardStyle.glass;
 
     final decorationGradient = isClassic
         ? const LinearGradient(

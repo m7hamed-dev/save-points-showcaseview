@@ -27,7 +27,6 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
         primaryColor: Color.fromARGB(255, 25, 173, 9),
         overlayTintOpacity: 0.12,
         cardStyle: ShowcaseCoachCardStyle.glass, // higher-contrast card
-        reduceMotion: true, // disables blur behind overlay for clarity
         showProgressIndicator: true, // Show step progress
         titleStyle: TextStyle(
           fontWeight: FontWeight.w800,
@@ -110,7 +109,6 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
         primaryColor: Color(0xFFE53935),
         buttonColor: Color(0xFFE53935),
         overlayTintOpacity: 0.0,
-        reduceMotion: true,
         showProgressIndicator: false,
         titleStyle: TextStyle(
           fontWeight: FontWeight.w700,
@@ -145,7 +143,6 @@ class _ExampleCoachPageState extends State<ExampleCoachPage> {
         primaryColor: Color(0xFFE53935),
         // buttonColor intentionally omitted to test fallback to primaryColor
         overlayTintOpacity: 0.0,
-        reduceMotion: true,
         showProgressIndicator: false,
       ),
       steps: _buildSteps(),

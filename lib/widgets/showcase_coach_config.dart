@@ -13,7 +13,6 @@ part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 /// ShowcaseCoachConfig(
 ///   primaryColor: Colors.blue,
 ///   cardStyle: ShowcaseCoachCardStyle.glass,
-///   reduceMotion: false,
 ///   titleStyle: TextStyle(fontSize: 24),
 /// )
 /// ```
@@ -31,7 +30,6 @@ class ShowcaseCoachConfig {
     this.buttonColor,
     this.overlayTintOpacity = _defaultOverlayTintOpacity,
     this.cardStyle = ShowcaseCoachCardStyle.glass,
-    this.reduceMotion = false,
     this.showProgressIndicator = true,
     this.enableTransitions,
     this.transitionDuration,
@@ -115,17 +113,6 @@ class ShowcaseCoachConfig {
   /// Widgets can still fall back to the theme primary color if both are null.
   Color? get effectiveButtonColor => buttonColor ?? primaryColor;
 
-  /// If `true`, disables heavier visual effects to improve performance.
-  ///
-  /// When enabled, this will:
-  /// - Disable backdrop blur effects
-  /// - Reduce animation complexity
-  /// - Simplify visual effects
-  ///
-  /// This is useful for lower-end devices or when respecting user accessibility
-  /// preferences for reduced motion.
-  final bool reduceMotion;
-
   /// Opacity for the radial gradient overlay tint.
   ///
   /// Must be between 0.0 and 1.0. Higher values create a more pronounced
@@ -153,8 +140,7 @@ class ShowcaseCoachConfig {
   /// When `true`, smooth animations are used when transitioning between steps.
   /// When `false`, transitions are instant.
   ///
-  /// If not provided, defaults to `true` unless [reduceMotion] is `true`,
-  /// in which case it defaults to `false`.
+  /// If not provided, defaults to `true`.
   ///
   /// ```dart
   /// enableTransitions: false  // Instant transitions
