@@ -112,23 +112,37 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
           final twoPiValue = controllerValue * 2 * math.pi;
           final haloWave = 0.5 + (0.5 * math.sin(twoPiValue));
 
-          // Border opacity pulses between 0.75 and 1.0 (smoother range)
-          final borderOpacity = 0.75 + (0.25 * curved);
+          // Border opacity pulses gently (smooth, friendly)
+          final borderOpacity = 0.78 + (0.22 * curved);
           // Apply glow intensity multiplier
           final glowMultiplier = widget.config?.glowIntensity ?? 1.0;
           final shadowMultiplier = widget.config?.shadowIntensity ?? 1.0;
 
-          // Shadow intensity pulses between 0.18 and 0.42 (enhanced range)
-          final baseShadowIntensity = (0.18 + (0.24 * curved)) * glowMultiplier;
-          // Blur radius pulses between 20 and 36 (smoother range)
-          final blurRadius = (20 + (16 * curved)) * glowMultiplier;
-          // Spread radius pulses between 3.0 and 6.0 (smoother range)
-          final spreadRadius = (3.0 + (3.0 * curved)) * glowMultiplier;
-          // Bounce scale with customizable intensity
+          // Shadow intensity pulses softly
+          final baseShadowIntensity = (0.14 + (0.20 * curved)) * glowMultiplier;
+          // Blur radius pulses gently
+          final blurRadius = (ShowcaseCoachConstants.blurRadiusMin +
+                  (ShowcaseCoachConstants.blurRadiusMax -
+                      ShowcaseCoachConstants.blurRadiusMin) *
+                      curved) *
+              glowMultiplier;
+          // Spread radius pulses softly
+          final spreadRadius = (ShowcaseCoachConstants.spreadRadiusMin +
+                  (ShowcaseCoachConstants.spreadRadiusMax -
+                      ShowcaseCoachConstants.spreadRadiusMin) *
+                      curved) *
+              glowMultiplier;
+          // Gentle bounce scale
           final bounceMultiplier = widget.config?.bounceIntensity ?? 1.0;
-          final bounceScale = 0.96 + (0.08 * curved * bounceMultiplier);
-          // Slight float to give a gentle rise/fall (smoother)
-          final floatOffset = -1.5 * curved;
+          final bounceScale =
+              ShowcaseCoachConstants.bounceScaleMin +
+              ((ShowcaseCoachConstants.bounceScaleMax -
+                      ShowcaseCoachConstants.bounceScaleMin) *
+                  curved *
+                  bounceMultiplier);
+          // Soft float for gentle rise/fall
+          final floatOffset =
+              ShowcaseCoachConstants.floatOffsetMax * curved;
 
           // Get border properties from config
           final borderWidth = widget.config?.borderWidth ?? 3.0;
@@ -169,7 +183,7 @@ class _PulsingHighlightState extends State<_PulsingHighlight>
                             color: Colors.white.withValues(
                               alpha: (0.4 * borderOpacity) * shadowMultiplier,
                             ),
-                            blurRadius: (12 + (5 * curved)) * shadowMultiplier,
+                            blurRadius: (10 + (4 * curved)) * shadowMultiplier,
                             spreadRadius: 1 * shadowMultiplier,
                           ),
                       ],
@@ -248,7 +262,7 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
     // Get animation durations from config
     final scaleDuration = widget.config?.scaleAnimationDuration ??
         widget.config?.transitionDuration ??
-        const Duration(milliseconds: 800);
+        ShowcaseCoachConstants.highlightScaleAnimationDuration;
     final fadeDuration = widget.config?.fadeAnimationDuration ??
         widget.config?.transitionDuration ??
         const Duration(milliseconds: 400);
@@ -256,14 +270,17 @@ class _HighlightAnimationState extends State<_HighlightAnimation>
     // Get animation curves from config
     final scaleCurve = widget.config?.scaleAnimationCurve ??
         widget.config?.transitionCurve ??
-        Curves.easeOutBack;
+        Curves.easeInOutCubic;
     final fadeCurve = widget.config?.fadeAnimationCurve ??
         widget.config?.transitionCurve ??
-        Curves.easeOut;
+        Curves.easeInOutSine;
 
     // Get scale range from config
-    final scaleRange =
-        widget.config?.scaleAnimationRange ?? const ScaleRange(0.8, 1.0);
+    final scaleRange = widget.config?.scaleAnimationRange ??
+        const ScaleRange(
+          ShowcaseCoachConstants.cardScaleBegin,
+          ShowcaseCoachConstants.scaleEnd,
+        );
 
     // Apply animation delay
     final delay = widget.config?.animationDelay ?? Duration.zero;
@@ -559,15 +576,24 @@ class _CoachOverlayContent extends StatelessWidget {
               if (!transitionsEnabled) {
                 return child;
               }
-              // Smooth fade with slight scale for depth
+              // Gentle fade with soft scale for depth
               final fade = CurvedAnimation(
                 parent: animation,
-                curve: const Interval(0.0, 0.9, curve: Curves.easeOut),
+                curve: const Interval(0.0, 0.95, curve: Curves.easeInOutSine),
+              );
+              final scale = Tween<double>(begin: 0.99, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: const Interval(0.0, 1.0, curve: Curves.easeInOutCubic),
+                ),
               );
 
               return FadeTransition(
                 opacity: fade,
-                child: child,
+                child: ScaleTransition(
+                  scale: scale,
+                  child: child,
+                ),
               );
             },
             child: _BackdropHole(
@@ -589,16 +615,15 @@ class _CoachOverlayContent extends StatelessWidget {
                 if (!transitionsEnabled) {
                   return child;
                 }
-                // Combine fade with subtle scale for smoother appearance
+                // Gentle fade with soft scale
                 final fade = CurvedAnimation(
                   parent: animation,
-                  curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
+                  curve: const Interval(0.0, 0.92, curve: Curves.easeInOutSine),
                 );
-
-                final scale = Tween<double>(begin: 0.95, end: 1.0).animate(
+                final scale = Tween<double>(begin: 0.96, end: 1.0).animate(
                   CurvedAnimation(
                     parent: animation,
-                    curve: transitionCurve,
+                    curve: const Interval(0.0, 1.0, curve: Curves.easeInOutCubic),
                   ),
                 );
 
@@ -796,11 +821,11 @@ class _CoachOverlayContent extends StatelessWidget {
                                 // Slide animation with configurable options
                                 final slideOffset =
                                     config?.slideAnimationOffset ??
-                                        Offset(0.0, placeAbove ? -0.2 : 0.2);
+                                        Offset(0.0, placeAbove ? -0.08 : 0.08);
                                 final slideCurve =
                                     config?.slideAnimationCurve ??
                                         config?.transitionCurve ??
-                                        Curves.easeOutBack;
+                                        Curves.easeInOutCubic;
                                 final slide = Tween<Offset>(
                                   begin: slideOffset,
                                   end: Offset.zero,
@@ -814,11 +839,14 @@ class _CoachOverlayContent extends StatelessWidget {
                                 // Scale animation with configurable options
                                 final scaleRange =
                                     config?.scaleAnimationRange ??
-                                        const ScaleRange(0.8, 1.0);
+                                        const ScaleRange(
+                                          ShowcaseCoachConstants.cardScaleBegin,
+                                          ShowcaseCoachConstants.cardScalePeak,
+                                        );
                                 final scaleCurve =
                                     config?.scaleAnimationCurve ??
                                         config?.transitionCurve ??
-                                        Curves.easeOutBack;
+                                        Curves.easeInOutCubic;
                                 final scale = TweenSequence<double>([
                                   TweenSequenceItem(
                                     tween: Tween(
@@ -842,7 +870,7 @@ class _CoachOverlayContent extends StatelessWidget {
                                 // Fade animation with configurable curve
                                 final fadeCurve = config?.fadeAnimationCurve ??
                                     config?.transitionCurve ??
-                                    Curves.easeOutQuart;
+                                    Curves.easeInOutSine;
                                 final fade = CurvedAnimation(
                                   parent: animation,
                                   curve: Interval(
@@ -934,10 +962,13 @@ class _CoachOverlayContent extends StatelessWidget {
 
                           // Scale animation with configurable options
                           final scaleRange = config?.scaleAnimationRange ??
-                              const ScaleRange(0.8, 1.0);
+                              const ScaleRange(
+                                ShowcaseCoachConstants.cardScaleBegin,
+                                ShowcaseCoachConstants.cardScalePeak,
+                              );
                           final scaleCurve = config?.scaleAnimationCurve ??
                               config?.transitionCurve ??
-                              Curves.easeOutBack;
+                              Curves.easeInOutCubic;
                           final scale = TweenSequence<double>([
                             TweenSequenceItem(
                               tween: Tween(
@@ -960,7 +991,7 @@ class _CoachOverlayContent extends StatelessWidget {
                           // Fade animation with configurable curve
                           final fadeCurve = config?.fadeAnimationCurve ??
                               config?.transitionCurve ??
-                              Curves.easeOutQuart;
+                              Curves.easeInOutSine;
                           final fade = CurvedAnimation(
                             parent: animation,
                             curve: Interval(
@@ -972,7 +1003,7 @@ class _CoachOverlayContent extends StatelessWidget {
 
                           // Slide animation with configurable options
                           final slideOffset = config?.slideAnimationOffset ??
-                              const Offset(0.0, 0.15);
+                              const Offset(0.0, 0.08);
                           final slideCurve = config?.slideAnimationCurve ??
                               config?.transitionCurve ??
                               transitionCurve;

@@ -25,14 +25,17 @@ class _BackdropHoleState extends State<_BackdropHole>
   @override
   void initState() {
     super.initState();
+    final duration = widget.config?.backdropTransitionDuration ??
+        widget.config?.transitionDuration ??
+        ShowcaseCoachConstants.overlayTransitionDuration;
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: duration,
       vsync: this,
     );
     _blurAnimation = Tween<double>(begin: 0.0, end: 5.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeOutCubic,
+        curve: Curves.easeInOutSine,
       ),
     );
     _opacityAnimation = CurvedAnimation(

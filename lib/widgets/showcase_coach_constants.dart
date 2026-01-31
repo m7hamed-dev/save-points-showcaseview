@@ -7,17 +7,17 @@ part of 'package:save_points_showcaseview/save_points_showcaseview.dart';
 class ShowcaseCoachConstants {
   ShowcaseCoachConstants._();
 
-  // Animation durations
-  static const Duration scrollAnimationDuration = Duration(milliseconds: 400);
-  static const Duration scrollAnimationDelay = Duration(milliseconds: 450);
-  static const Duration backdropAnimationDuration = Duration(milliseconds: 500);
-  static const Duration overlayTransitionDuration = Duration(milliseconds: 450);
-  static const Duration gradientTransitionDuration = Duration(milliseconds: 500);
-  static const Duration highlightAnimationDuration = Duration(milliseconds: 700);
-  static const Duration cardTransitionDuration = Duration(milliseconds: 600);
-  static const Duration pulsingAnimationDuration = Duration(milliseconds: 2400);
+  // Animation durations (very smooth, friendly feel)
+  static const Duration scrollAnimationDuration = Duration(milliseconds: 550);
+  static const Duration scrollAnimationDelay = Duration(milliseconds: 600);
+  static const Duration backdropAnimationDuration = Duration(milliseconds: 650);
+  static const Duration overlayTransitionDuration = Duration(milliseconds: 600);
+  static const Duration gradientTransitionDuration = Duration(milliseconds: 650);
+  static const Duration highlightAnimationDuration = Duration(milliseconds: 850);
+  static const Duration cardTransitionDuration = Duration(milliseconds: 750);
+  static const Duration pulsingAnimationDuration = Duration(milliseconds: 3200);
   static const Duration highlightScaleAnimationDuration =
-      Duration(milliseconds: 800);
+      Duration(milliseconds: 950);
 
   // Validation retry settings
   static const int maxValidationRetries = 10;
@@ -32,10 +32,10 @@ class ShowcaseCoachConstants {
   static const double borderWidth = 3.0;
   static const double cardBorderWidth = 1.4;
 
-  // Animation curves
-  static const Curve defaultAnimationCurve = Curves.easeOutCubic;
-  static const Curve scrollAnimationCurve = Curves.easeInOutCubic;
-  static const Curve highlightAnimationCurve = Curves.easeInOutCubic;
+  // Animation curves (very smooth, friendly feel)
+  static const Curve defaultAnimationCurve = Curves.easeInOutCubic;
+  static const Curve scrollAnimationCurve = Curves.easeInOutSine;
+  static const Curve highlightAnimationCurve = Curves.easeInOutSine;
 
   // Blur and effects
   static const double defaultBlurSigma = 8.0;
@@ -50,21 +50,21 @@ class ShowcaseCoachConstants {
   static const double shadowIntensityMax = 0.42;
   static const double whiteShadowOpacity = 0.4;
 
-  // Highlight animation values
-  static const double blurRadiusMin = 20.0;
-  static const double blurRadiusMax = 36.0;
-  static const double spreadRadiusMin = 3.0;
-  static const double spreadRadiusMax = 6.0;
-  static const double bounceScaleMin = 0.96;
-  static const double bounceScaleMax = 1.04;
-  static const double floatOffsetMax = -1.5;
+  // Highlight animation values (gentle, friendly pulse)
+  static const double blurRadiusMin = 18.0;
+  static const double blurRadiusMax = 30.0;
+  static const double spreadRadiusMin = 2.5;
+  static const double spreadRadiusMax = 5.0;
+  static const double bounceScaleMin = 0.98;
+  static const double bounceScaleMax = 1.02;
+  static const double floatOffsetMax = -1.0;
 
-  // Scale animation values
-  static const double scaleBegin = 0.75;
-  static const double scalePeak = 1.08;
+  // Scale animation values (soft, approachable)
+  static const double scaleBegin = 0.92;
+  static const double scalePeak = 1.02;
   static const double scaleEnd = 1.0;
-  static const double cardScaleBegin = 0.8;
-  static const double cardScalePeak = 1.1;
+  static const double cardScaleBegin = 0.94;
+  static const double cardScalePeak = 1.02;
 
   // Alignment
   static const double scrollAlignment = 0.5;
