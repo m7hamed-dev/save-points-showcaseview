@@ -33,7 +33,7 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 Add to `pubspec.yaml`:
 ```yaml
 dependencies:
-  save_points_showcaseview: ^1.6.2
+  save_points_showcaseview: ^1.6.3
 ```
 Then install:
 ```bash
@@ -439,7 +439,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
 
 ## Version History
 
-- **v1.6.2**: Version bump; documentation and example alignment
+- **v1.6.3**: Version bump; documentation and example alignment
 - **v1.6.0**: Overlay styles docs (modern/classic/compact), example type selector improvements
 - **v1.5.0**: Customizable button text at config, tour, and step levels
 - **v1.4.0**: Advanced animation customization, rotation, presets, delays
