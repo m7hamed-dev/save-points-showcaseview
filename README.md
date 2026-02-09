@@ -12,9 +12,18 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 ![Showcase Coach Preview]
 ![Image](https://github.com/user-attachments/assets/cdd39698-c90e-455c-82ea-3264e462aa9b)
 
-<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/561459a6-9d45-4771-bd22-d7c71d10ed31" />
-<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/930c0cbf-75ef-465c-9efa-8d320efa2434" />
-<img width="2752" height="1536" alt="Image" src="https://github.com/user-attachments/assets/cd1190cc-aeae-4009-8d9d-a01c6c71a9b9" />
+<img src="https://github.com/user-attachments/assets/561459a6-9d45-4771-bd22-d7c71d10ed31"
+     alt="Image"
+     width="1200" />
+
+<img src="https://github.com/user-attachments/assets/930c0cbf-75ef-465c-9efa-8d320efa2434"
+     alt="Image"
+     width="1200" />
+
+<img src="https://github.com/user-attachments/assets/cd1190cc-aeae-4009-8d9d-a01c6c71a9b9"
+     alt="Image"
+     width="1400" />
+
 ### 🚀 [**Try it live → Interactive Demo**](https://helpful-beignet-1d32ca.netlify.app/)
 
 ## Why use Showcase Coach?
