@@ -9,8 +9,17 @@ Modern, design-forward showcase coach overlays for Flutter with smooth motion, g
 <!-- ![Showcase Coach Screenshot](https://raw.githubusercontent.com/m7hamed-dev/save-points-showcaseview/main/assets/screenshot.png) -->
 
 ## Preview
-![Showcase Coach Preview](https://cdn.jsdelivr.net/gh/m7hamed-dev/save_points_sa_privacy_polices@main/showcaseview-video.gif)
+![Showcase Coach Preview]
+(
+https://github-production-user-asset-6210df.s3.amazonaws.com/71645176/546913392-00543876-57b1-46ca-b24d-a9c6003bd89b.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260209%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260209T054733Z&X-Amz-Expires=300&X-Amz-Signature=d9c05d37795df4484fcb33a3caef01f0bbd304634fc4fe71ce0b7be8b2a224c3&X-Amz-SignedHeaders=host
 
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/4ce01512-c5b8-4b81-9e65-012bb831982c" />
+
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/38d26769-4e82-4032-9a07-e7c4baf9ae13" />
+
+<img width="2752" height="1536" alt="Image" src="https://github.com/user-attachments/assets/af284bab-24ed-4110-8e04-4b32793aa2c0" />
+
+)
 ### 🚀 [**Try it live → Interactive Demo**](https://helpful-beignet-1d32ca.netlify.app/)
 
 ## Why use Showcase Coach?
