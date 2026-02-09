@@ -1,6 +1,6 @@
 name: save_points_showcaseview
 description: A beautiful, modern showcase coach overlay for Flutter with smooth animations, glassmorphism effects, and step-by-step guided tours.
-version: 1.6.1
+version: 1.6.2
 homepage: https://github.com/m7hamed-dev/save-points-showcaseview
 repository: https://github.com/m7hamed-dev/save-points-showcaseview
 issue_tracker: https://github.com/m7hamed-dev/save-points-showcaseview/issues
@@ -20,3 +20,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+false_secrets:
+  - README.md:AKIA[A-Z0-9]{16}
