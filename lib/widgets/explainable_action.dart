@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:save_points_showcaseview/models/phase.dart';
 import 'package:save_points_showcaseview/save_points_showcaseview.dart';
 
