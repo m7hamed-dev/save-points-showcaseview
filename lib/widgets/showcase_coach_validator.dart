@@ -126,18 +126,21 @@ class ShowcaseCoachValidator {
       buffer.writeln('\n💡 Common causes and solutions:');
       buffer.writeln('1. Widget not built yet:');
       buffer.writeln(
-          '   → Call ShowcaseCoach.show() after the widget tree is built');
+        '   → Call ShowcaseCoach.show() after the widget tree is built',
+      );
       buffer.writeln('   → Use WidgetsBinding.instance.addPostFrameCallback()');
       buffer.write('\n');
       buffer.writeln('2. Widget is hidden or off-screen:');
       buffer.writeln('   → Check if widget is inside a conditional (if/else)');
       buffer.writeln(
-          '   → Ensure widget is not wrapped in Visibility(visible: false)');
+        '   → Ensure widget is not wrapped in Visibility(visible: false)',
+      );
       buffer.writeln('   → Verify widget is not scrolled out of view');
       buffer.write('\n');
       buffer.writeln('3. GlobalKey not attached:');
       buffer.writeln(
-          '   → Ensure GlobalKey is passed to the widget\'s key parameter');
+        '   → Ensure GlobalKey is passed to the widget\'s key parameter',
+      );
       buffer
           .writeln('   → Verify the widget exists in the current route/screen');
       buffer.write('\n');
